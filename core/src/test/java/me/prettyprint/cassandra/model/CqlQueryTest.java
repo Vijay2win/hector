@@ -17,14 +17,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CqlQueryTest extends BaseEmbededServerSetupTest {
-  
+
   private final static String KEYSPACE = "Keyspace1";
   private static final StringSerializer se = new StringSerializer();
   private static final LongSerializer le = new LongSerializer();
   private Cluster cluster;
   private Keyspace keyspace;
   private String cf = "StandardLong1";
-  
+
   @Before
   public void setupCase() {
     cluster = getOrCreateCluster("MyCluster", "127.0.0.1:9170");
@@ -44,16 +44,16 @@ public class CqlQueryTest extends BaseEmbededServerSetupTest {
     .addInsertion("cqlQueryTest_key6", cf, createColumn("birthmonth", 6L, se, le))
     .execute();
   }
-  
+
   @Test
   public void testSimpleSelect() {
     CqlQuery<String,String,Long> cqlQuery = new CqlQuery<String,String,Long>(keyspace, se, se, le);
     cqlQuery.setQuery("select * from StandardLong1");
     QueryResult<CqlRows<String,String,Long>> result = cqlQuery.execute();
     assertEquals(6,result.get().getCount());
-    
+
   }
-  
+
   @Test
   public void testCountQuery() {
     CqlQuery<String,String,Long> cqlQuery = new CqlQuery<String,String,Long>(keyspace, se, se, le);
@@ -69,5 +69,5 @@ public class CqlQueryTest extends BaseEmbededServerSetupTest {
     QueryResult<CqlRows<String,String,Long>> result = cqlQuery.execute();
 
   }
-  
+
 }

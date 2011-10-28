@@ -21,7 +21,7 @@ import org.apache.cassandra.thrift.SliceRange;
  * @author zznate
  */
 public final class HSlicePredicate<N> {
-  
+
   protected Collection<N> columnNames;
   protected N start;
   protected N finish;
@@ -34,7 +34,7 @@ public final class HSlicePredicate<N> {
   protected PredicateType predicateType = PredicateType.Unknown;
 
   private static final ByteBuffer EMPTY_BYTE_BUFFER = ByteBuffer.wrap(new byte[0]);
-  
+
   public HSlicePredicate(Serializer<N> columnNameSerializer) {
     Assert.notNull(columnNameSerializer, "columnNameSerializer can't be null");
     this.columnNameSerializer = columnNameSerializer;
@@ -49,7 +49,7 @@ public final class HSlicePredicate<N> {
   public HSlicePredicate<N> setColumnNames(N... columnNames) {
     return setColumnNames(Arrays.asList(columnNames));
   }
-  
+
   public HSlicePredicate<N> addColumnName(N columnName) {
     if ( columnNames == null )
       columnNames = new ArrayList<N>();
@@ -57,7 +57,7 @@ public final class HSlicePredicate<N> {
     predicateType = PredicateType.ColumnNames;
     return this;
   }
-  
+
   /**
    * Same as varargs signature, except we take a collection
    *
@@ -82,28 +82,28 @@ public final class HSlicePredicate<N> {
   }
 
   /**
-   * Set the columnName on which we will start. 
-   * Switches to {@link PredicateType#Range} 
+   * Set the columnName on which we will start.
+   * Switches to {@link PredicateType#Range}
    */
   public HSlicePredicate<N> setStartOn(N start) {
     this.start = start;
     predicateType = PredicateType.Range;
     return this;
   }
-  
+
   /**
-   * Set the columnName on which we will end. 
-   * Switches to {@link PredicateType#Range} 
+   * Set the columnName on which we will end.
+   * Switches to {@link PredicateType#Range}
    */
   public HSlicePredicate<N> setEndOn(N finish) {
     this.finish = finish;
     predicateType = PredicateType.Range;
     return this;
   }
-  
+
   /**
    * Set the number of columns to return for this slice
-   * Switches to {@link PredicateType#Range} 
+   * Switches to {@link PredicateType#Range}
    */
   public HSlicePredicate<N> setCount(int count) {
     this.count = count;
@@ -113,19 +113,19 @@ public final class HSlicePredicate<N> {
   }
 
   /**
-   * Sets the return order of the columns to be reversed. 
-   * NOTE: this is slightly less efficient than reading in comparator order. 
-   * Switches to {@link PredicateType#Range} 
+   * Sets the return order of the columns to be reversed.
+   * NOTE: this is slightly less efficient than reading in comparator order.
+   * Switches to {@link PredicateType#Range}
    */
   public HSlicePredicate<N> setReversed(boolean reversed) {
     this.reversed = reversed;
     predicateType = PredicateType.Range;
     return this;
   }
-  
-  
-  
-  
+
+
+
+
   /**
    * Set a predicate of start/finish to retrieve a list of columns in this range.
    * Either start and or finish can be null which will toggle the underlying predicate to
@@ -199,11 +199,11 @@ public final class HSlicePredicate<N> {
 
   @Override
   public String toString() {
-    return String.format("HSlicePredicate(%s)", predicateType == PredicateType.ColumnNames ? columnNames : formatPredicate());    
+    return String.format("HSlicePredicate(%s)", predicateType == PredicateType.ColumnNames ? columnNames : formatPredicate());
   }
-  
+
   private String formatPredicate() {
-    return String.format("start:[%s],end:[%s],count:%d,reversed:%b", 
+    return String.format("start:[%s],end:[%s],count:%d,reversed:%b",
         start != null ? start.toString() : "''",
             finish != null ? finish.toString() : "''",
                 count, reversed);

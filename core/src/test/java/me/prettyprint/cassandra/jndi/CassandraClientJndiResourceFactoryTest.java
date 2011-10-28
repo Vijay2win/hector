@@ -50,7 +50,7 @@ public class CassandraClientJndiResourceFactoryTest extends BaseEmbededServerSet
     resource.add(new StringRefAddr("clusterName", clusterName));
     resource.add(new StringRefAddr("keyspace", "Keyspace1"));
     resource.add(new StringRefAddr("autoDiscoverHosts", "true"));
-    
+
 
     Name jndiName = mock(Name.class);
     Context context = new InitialContext();

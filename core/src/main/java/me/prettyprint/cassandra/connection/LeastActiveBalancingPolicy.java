@@ -15,15 +15,15 @@ import com.google.common.collect.Lists;
  * The list of hosts is shuffled on each pass to account for the case
  * where a number of hosts are at the minimum number of connections
  * (ie. they are not busy).
- * 
- * 
+ *
+ *
  * @author zznate
  */
 public class LeastActiveBalancingPolicy implements LoadBalancingPolicy {
-  
+
   private static final long serialVersionUID = 329849818218657061L;
   private static final Logger log = LoggerFactory.getLogger(LeastActiveBalancingPolicy.class);
-  
+
   @Override
   public HClientPool getPool(Collection<HClientPool> pools, Set<CassandraHost> excludeHosts) {
     List<HClientPool> vals = Lists.newArrayList(pools);
@@ -33,7 +33,7 @@ public class LeastActiveBalancingPolicy implements LoadBalancingPolicy {
     Iterator<HClientPool> iterator = vals.iterator();
     HClientPool concurrentHClientPool = iterator.next();
     if ( excludeHosts != null && excludeHosts.size() > 0 ) {
-      while (iterator.hasNext()) {        
+      while (iterator.hasNext()) {
         if ( !excludeHosts.contains(concurrentHClientPool.getCassandraHost()) ) {
           break;
         }
@@ -44,16 +44,16 @@ public class LeastActiveBalancingPolicy implements LoadBalancingPolicy {
   }
 
   private final class ShufflingCompare implements Comparator<HClientPool> {
-    
+
     public int compare(HClientPool o1, HClientPool o2) {
       if ( log.isDebugEnabled() ) {
         log.debug("comparing 1: {} and count {} with 2: {} and count {}",
           new Object[]{o1.getCassandraHost(), o1.getNumActive(), o2.getCassandraHost(), o2.getNumActive()});
       }
-      return o1.getNumActive() - o2.getNumActive();      
+      return o1.getNumActive() - o2.getNumActive();
     }
   }
-  
+
   @Override
   public HClientPool createConnection(CassandraHost host) {
 	  return new ConcurrentHClientPool(host);

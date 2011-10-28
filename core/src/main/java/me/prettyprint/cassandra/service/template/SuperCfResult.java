@@ -13,7 +13,7 @@ import me.prettyprint.hector.api.beans.HSuperColumn;
  * Holds the result for the contents of a super column. This interface add
  * access to the current super column name since this may be a property of the
  * object being mapped into.
- * 
+ *
  * @author david
  * @since Mar 10, 2011
  * @param <K>
@@ -24,9 +24,9 @@ import me.prettyprint.hector.api.beans.HSuperColumn;
  */
 public interface SuperCfResult<K, SN, N> extends ColumnFamilyResult<K, N> {
   // TODO remove. this no loger makes sense with many-to-one on a row
-  
+
   Collection<SN> getSuperColumns();
-  
+
   K getKey();
 
   UUID getUUID(SN sColumnName, N columnName);
@@ -40,15 +40,15 @@ public interface SuperCfResult<K, SN, N> extends ColumnFamilyResult<K, N> {
   Boolean getBoolean(SN sColumnName, N columnName);
 
   byte[] getByteArray(SN sColumnName, N columnName);
-  
+
   ByteBuffer getByteBuffer(SN sColumnName, N columnName);
 
-  Date getDate(SN sColumnName, N columnName);  
-  
+  Date getDate(SN sColumnName, N columnName);
+
   void applySuperColumn(SN sColumnName);
-  
+
   SN getActiveSuperColumn();
-  
+
   @Override
   SuperCfResult<K, SN, N> next();
 }

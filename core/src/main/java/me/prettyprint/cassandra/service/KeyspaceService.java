@@ -47,7 +47,7 @@ public interface KeyspaceService {
   Column getColumn(ByteBuffer key, ColumnPath columnPath) throws HectorException;
 
   Column getColumn(String key, ColumnPath columnPath) throws HectorException;
-  
+
   /**
    * Get the Counter  at the given columnPath.
    *
@@ -57,7 +57,7 @@ public interface KeyspaceService {
    *           if no value exists for the counter
    */
   CounterColumn getCounter(ByteBuffer key, ColumnPath columnPath) throws HectorException;
-  
+
   CounterColumn getCounter(String key, ColumnPath columnPath) throws HectorException;
 
   /**
@@ -102,10 +102,10 @@ public interface KeyspaceService {
    */
   List<Column> getSlice(ByteBuffer key, ColumnParent columnParent, SlicePredicate predicate)
       throws HectorException;
-  
+
   List<Column> getSlice(String key, ColumnParent columnParent, SlicePredicate predicate)
       throws HectorException;
-  
+
   /**
    * Get the group of counter columns contained by columnParent.
    *
@@ -115,7 +115,7 @@ public interface KeyspaceService {
    */
   List<CounterColumn> getCounterSlice(ByteBuffer key, ColumnParent columnParent, SlicePredicate predicate)
       throws HectorException;
-  
+
   public List<CounterColumn> getCounterSlice(String key, ColumnParent columnParent, SlicePredicate predicate)
       throws HectorException;
 
@@ -173,12 +173,12 @@ public interface KeyspaceService {
   void insert(String key, ColumnPath columnPath, ByteBuffer value) throws HectorException;
 
   void insert(String key, ColumnPath columnPath, ByteBuffer value, long timestamp) throws HectorException;
-  
+
   /**
    * Add a counter with CL.ONE
    */
   void addCounter(ByteBuffer key, ColumnParent columnParent, CounterColumn counterColumn) throws HectorException;
-  
+
   /**
    * Add a counter with CL.ONE
    */
@@ -206,9 +206,9 @@ public interface KeyspaceService {
   void remove(String key, ColumnPath columnPath) throws HectorException;
 
   void remove(String key, ColumnPath columnPath, long timestamp) throws HectorException;
-  
+
   void removeCounter(ByteBuffer key, ColumnPath columnPath) throws HectorException;
-  
+
   void removeCounter(String key, ColumnPath columnPath) throws HectorException;
 
 

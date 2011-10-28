@@ -20,7 +20,7 @@ public abstract class BackgroundCassandraHostService {
       CassandraHostConfigurator cassandraHostConfigurator) {
     this.connectionManager = connectionManager;
     this.cassandraHostConfigurator = cassandraHostConfigurator;
-    
+
   }
 
   abstract void shutdown();

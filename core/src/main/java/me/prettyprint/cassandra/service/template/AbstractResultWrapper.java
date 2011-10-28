@@ -20,17 +20,17 @@ import me.prettyprint.hector.api.Serializer;
  * overlap in needs for both standard and super queries. This class consolidates
  * what they have in common. All data is read into ByteBuffers and translated to
  * a primitive type when requested.
- * 
+ *
  * This class is a non-static inner class which inherits the Java generic
  * parameters of it's containing ColumnFamilyTemplate instance. This allows it to
  * inherit the <K> parameter from ColumnFamilyTemplate.
- * 
+ *
  * The <N> parameters allows this to be used by standard and super column
  * queries
- * 
+ *
  * @author david
  * @author zznate
- * @param <K> 
+ * @param <K>
  *          the type of the key
  * @param <N>
  *          the standard column name type or the super column's child column
@@ -41,7 +41,7 @@ public abstract class AbstractResultWrapper<K, N> implements ColumnFamilyResult<
   protected Serializer<K> keySerializer;
   protected Serializer<N> columnNameSerializer;
   protected ResultStatus resultStatus;
-  
+
   public AbstractResultWrapper(Serializer<K> keySerializer, Serializer<N> columnNameSerializer, ResultStatus resultStatus) {
     this.keySerializer = keySerializer;
     this.columnNameSerializer = columnNameSerializer;
@@ -78,12 +78,12 @@ public abstract class AbstractResultWrapper<K, N> implements ColumnFamilyResult<
   public Date getDate(N columnName) {
     return DateSerializer.get().fromByteBuffer(getColumnValue(columnName));
   }
-  
+
   @Override
   public long getExecutionTimeMicro() {
     return  resultStatus.getExecutionTimeMicro();
-  }  
-  
+  }
+
   @Override
   public long getExecutionTimeNano() {
     return resultStatus.getExecutionTimeNano();
@@ -93,5 +93,5 @@ public abstract class AbstractResultWrapper<K, N> implements ColumnFamilyResult<
   public CassandraHost getHostUsed() {
     return resultStatus.getHostUsed();
   }
-  
+
 }

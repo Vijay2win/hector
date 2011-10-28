@@ -35,20 +35,20 @@ import com.google.common.collect.Iterators;
  * constantly passed for every operation on the column family. These include the
  * keyspace, column family name, key serializer, and the column name serializer
  * (for standard column name or the super column name).
- * 
+ *
  * The Java generic types of the ColumnFamilyTemplate class itself are limited to
  * the key and column name type. It defers the generic types for super column
  * child types to the individual update/query operation.
- * 
+ *
  * @author david
  * @author zznate
  * @param <K>
  *          The column family key type
  * @param <N>
- *          The column family name type 
+ *          The column family name type
  */
 public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTemplate<K, N> {
-  
+
   public ColumnFamilyTemplate(Keyspace keyspace, String columnFamily,
       Serializer<K> keySerializer, Serializer<N> topSerializer) {
     super(keyspace, columnFamily, keySerializer, topSerializer);
@@ -79,17 +79,17 @@ public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTem
     updater.addKey(key);
     return updater;
   }
-  
+
   public void update(ColumnFamilyUpdater<K, N> updater) {
     updater.update();
     executeIfNotBatched();
   }
-  
-  
+
+
   /**
    * Checks if there are any columns at a row specified by key in a standard
    * column family
-   * 
+   *
    * @param key
    * @return true if columns exist
    */
@@ -110,7 +110,7 @@ public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTem
 
   /**
    * Counts columns in the specified range of a standard column family
-   * 
+   *
    * @param key
    * @param start
    * @param end
@@ -133,7 +133,7 @@ public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTem
   public ColumnFamilyResult<K, N> queryColumns(Iterable<K> keys) {
     return doExecuteMultigetSlice(keys, activeSlicePredicate);
   }
-  
+
   @SuppressWarnings("unchecked")
   public <T> T queryColumns(K key, ColumnFamilyRowMapper<K, N, T> mapper) {
     return queryColumns(key, activeSlicePredicate, mapper);
@@ -142,7 +142,7 @@ public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTem
   /**
    * Queries a range of columns at the given key and maps them to an object of
    * type OBJ using the given mapping object
-   * 
+   *
    * @param <T>
    * @param key
    * @param start
@@ -158,7 +158,7 @@ public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTem
   /**
    * Queries all columns at a given key and maps them to an object of type OBJ
    * using the given mapping object
-   * 
+   *
    * @param <T>
    * @param key
    * @param columns
@@ -169,18 +169,18 @@ public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTem
   public <T> T queryColumns(K key, List<N> columns,
       ColumnFamilyRowMapper<K, N, T> mapper) {
     HSlicePredicate<N> predicate = new HSlicePredicate<N>(topSerializer);
-    predicate.setColumnNames(columns);        
+    predicate.setColumnNames(columns);
     return doExecuteSlice(key, predicate, mapper);
   }
 
 
   public <V> MappedColumnFamilyResult<K,N,V> queryColumns(Iterable<K> keys,
-      ColumnFamilyRowMapper<K, N, V> mapper) {    
+      ColumnFamilyRowMapper<K, N, V> mapper) {
     return doExecuteMultigetSlice(keys, activeSlicePredicate, mapper);
   }
 
   public <V> MappedColumnFamilyResult<K,N,V> queryColumns(Iterable<K> keys,
-      HSlicePredicate<N> predicate, ColumnFamilyRowMapper<K, N, V> mapper) {     
+      HSlicePredicate<N> predicate, ColumnFamilyRowMapper<K, N, V> mapper) {
     return doExecuteMultigetSlice(keys, predicate, mapper);
   }
 
@@ -211,16 +211,16 @@ public abstract class ColumnFamilyTemplate<K, N> extends AbstractColumnFamilyTem
   }
 
   //-------------------------- delegation methods ----------------------------
-  
+
   protected abstract <T> T doExecuteSlice(K key, HSlicePredicate<N> predicate, ColumnFamilyRowMapper<K, N, T> mapper);
-    
+
   protected abstract ColumnFamilyResult<K, N> doExecuteSlice(final K key, final HSlicePredicate<N> workingSlicePredicate);
-    
+
   protected abstract ColumnFamilyResult<K, N> doExecuteMultigetSlice(final Iterable<K> keys, final HSlicePredicate<N> workingSlicePredicate);
 
-  protected abstract <V> MappedColumnFamilyResult<K, N, V> doExecuteMultigetSlice(final Iterable<K> keys, 
+  protected abstract <V> MappedColumnFamilyResult<K, N, V> doExecuteMultigetSlice(final Iterable<K> keys,
       final HSlicePredicate<N> workingSlicePredicate,
       final ColumnFamilyRowMapper<K, N, V> mapper);
 
-  
+
 }

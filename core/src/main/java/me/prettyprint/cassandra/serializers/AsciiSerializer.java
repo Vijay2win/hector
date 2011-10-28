@@ -10,7 +10,7 @@ import me.prettyprint.hector.api.ddl.ComparatorType;
 /**
  * Almost identical to StringSerializer except we use the US-ASCII character set
  * code
- * 
+ *
  * @author zznate
  */
 public final class AsciiSerializer extends AbstractSerializer<String> {

@@ -65,7 +65,7 @@ public final class HCounterColumnImpl<N> implements HCounterColumn<N> {
   }
 
   /**
-   * Set the time-to-live value for this column in seconds. 
+   * Set the time-to-live value for this column in seconds.
    * The server will mark this column as deleted once the number of seconds has elapsed.
    */
   @Override
@@ -83,14 +83,14 @@ public final class HCounterColumnImpl<N> implements HCounterColumn<N> {
   }
 
   @Override
-  public N getName() {    
+  public N getName() {
     return counterColumn.isSetName() ? nameSerializer.fromByteBuffer(counterColumn.name.duplicate()) : null;
   }
 
   @Override
-  public Long getValue() {       
+  public Long getValue() {
     return counterColumn.value;
-  }  
+  }
 
   public CounterColumn toThrift() {
     return counterColumn;
@@ -108,7 +108,7 @@ public final class HCounterColumnImpl<N> implements HCounterColumn<N> {
   }
 
   @Override
-  public ByteBuffer getNameBytes() {  
+  public ByteBuffer getNameBytes() {
     return counterColumn.isSetName() ? counterColumn.name.duplicate() : null;
   }
 
@@ -116,7 +116,7 @@ public final class HCounterColumnImpl<N> implements HCounterColumn<N> {
    * Clear value, timestamp and ttl (the latter two set to '0') leaving only the column name
    */
   @Override
-  public HCounterColumn<N> clear() {    
+  public HCounterColumn<N> clear() {
     counterColumn.value = 0; // TODO (patricioe) Is this ok?
     //counterColumn.ttl = 0; TODO (patricioe) pending on trunk
     //counterColumn.setTtlIsSet(false);
@@ -135,7 +135,7 @@ public final class HCounterColumnImpl<N> implements HCounterColumn<N> {
     this.counterColumn = c;
     return this;
   }
-  
+
   @Override
   public String toString() {
     return String.format("HCounterColumn(%s=%s)",getName(), getValue());

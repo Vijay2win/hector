@@ -11,7 +11,7 @@ import me.prettyprint.hom.cache.HectorObjectMapperException;
 /**
  * Defines properties used for representing and constructing a cassandra key and
  * mapping to/from POJO property(ies).
- * 
+ *
  * @author B. Todd Burruss
  */
 public class KeyDefinition {

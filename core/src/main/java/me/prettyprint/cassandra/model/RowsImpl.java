@@ -34,7 +34,7 @@ public class RowsImpl<K, N, V> implements Rows<K, N, V> {
           valueSerializer));
     }
   }
-  
+
   protected RowsImpl() {
     this.rows = new HashMap<K, Row<K,N,V>>();
   }

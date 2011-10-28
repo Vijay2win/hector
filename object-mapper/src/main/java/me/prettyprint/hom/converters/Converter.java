@@ -4,7 +4,7 @@ package me.prettyprint.hom.converters;
 /**
  * Interface defining a custom object mapper conversion. For instance, from an
  * enum to a string.
- * 
+ *
  * @author Todd Burruss
  */
 public interface Converter<T> {

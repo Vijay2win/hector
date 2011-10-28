@@ -27,12 +27,12 @@ public interface HColumn<N, V> {
    * (Advanced) Returns the underlying ByteBuffer for the value via ByteBuffer.duplicate().
    */
   ByteBuffer getValueBytes();
-  
+
   /**
    * (Advanced) Returns the underlying ByteBuffer for the name via ByteBuffer.duplicate().
    */
   ByteBuffer getNameBytes();
-  
+
   long getClock();
 
   HColumn<N,V> setClock(long clock);
@@ -40,9 +40,9 @@ public interface HColumn<N, V> {
   int getTtl();
 
   HColumn<N,V> setTtl(int ttl);
-  
+
   HColumn<N,V> clear();
-  
+
   HColumn<N,V> apply(V value, long clock, int ttl);
 
   Serializer<N> getNameSerializer();

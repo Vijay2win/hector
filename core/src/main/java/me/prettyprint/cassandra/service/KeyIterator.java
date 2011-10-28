@@ -13,7 +13,7 @@ import me.prettyprint.hector.api.query.RangeSlicesQuery;
 
 
 /**
- * This class returns each key in the specified Column Family as an Iterator.  You 
+ * This class returns each key in the specified Column Family as an Iterator.  You
  * can use this class in a for loop without the overhead of first storing each
  * key in a large array.  See StringKeyIterator for a convenience class if the key
  * is a String.
@@ -89,7 +89,7 @@ public class KeyIterator<K> implements Iterable<K> {
     rowsIterator = (rows != null) ? rows.iterator() : null;
 
     // we'll skip this first one, since it is the same as the last one from previous time we executed
-    if (start != null && rowsIterator != null) rowsIterator.next();   
+    if (start != null && rowsIterator != null) rowsIterator.next();
 
     if (!rowsIterator.hasNext()) {
       nextValue = null;    // all done.  our iterator's hasNext() will now return false;

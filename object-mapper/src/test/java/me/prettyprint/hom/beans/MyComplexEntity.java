@@ -13,13 +13,13 @@ public class MyComplexEntity {
 
   @Id
   private int intProp1;
-  
+
   @Id
   private String strProp1;
-  
+
   @Column( name ="strProp2")
   private String strProp2;
-  
+
   @Column( name ="strProp3")
   private String strProp3;
 

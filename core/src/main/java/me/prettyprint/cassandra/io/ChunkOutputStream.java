@@ -16,9 +16,9 @@ import me.prettyprint.hector.api.mutation.Mutator;
  * will be split up by chunks of the given chunkSize. Each chunk we get written
  * to own column which will have the chunk number (starting at 0) as column key
  * (Long).
- * 
+ *
  * This implementation is not thread-safe!
- * 
+ *
  */
 public class ChunkOutputStream<T> extends OutputStream {
   private byte[] chunk;
@@ -37,7 +37,7 @@ public class ChunkOutputStream<T> extends OutputStream {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.io.OutputStream#write(int)
    */
   public void write(int b) throws IOException {
@@ -64,7 +64,7 @@ public class ChunkOutputStream<T> extends OutputStream {
   /**
    * Write the data to column if the configured chunk size is reached or if the
    * stream should be closed
-   * 
+   *
    * @param close
    * @throws IOException
    */

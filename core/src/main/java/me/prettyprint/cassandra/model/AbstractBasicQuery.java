@@ -6,7 +6,7 @@ import me.prettyprint.hector.api.Serializer;
 import me.prettyprint.hector.api.query.Query;
 
 /**
- * 
+ *
  * @author patricioe (Patricio Echague - patricio@datastax.com)
  *
  * @param <K> Key type

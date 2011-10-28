@@ -13,11 +13,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name="SimpleRelationshipBeanColumnFamily")
 public class SimpleRelationshipBean {
-  
+
   private UUID baseId;
-  
+
   private String myType;
-    
+
   private Set<SimpleTestBean> simpleTestBeans;
 
   @Id

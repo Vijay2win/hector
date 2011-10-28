@@ -10,10 +10,10 @@ import javax.persistence.Table;
 @IdClass( MyCompositePK.class )
 @Table(name="ComplexColumnFamily")
 public class MyComplexEntityMissingIdField {
-  
+
   @Id
   private String strProp1;
-  
+
   @Column( name ="strProp2")
   private String strProp2;
 

@@ -211,12 +211,12 @@ public class ClassCacheMgrTest {
   public void testParsingComplexEntity() {
     ClassCacheMgr cacheMgr = new ClassCacheMgr();
     CFMappingDef<MyComplexEntity> cfMapDef = cacheMgr.initializeCacheForClass(MyComplexEntity.class);
-    
+
     KeyDefinition keyDef = cfMapDef.getKeyDef();
     assertEquals( MyCompositePK.class, keyDef.getPkClazz() );
     assertEquals( 2, keyDef.getIdPropertyMap().size() );
     assertEquals( keyDef.getIdPropertyMap().size(), keyDef.getPropertyDescriptorMap().size() );
-    
+
   }
 
   @Ignore( "Cannot enable until method annotations are supported by ClassCacheMgr")

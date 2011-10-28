@@ -54,7 +54,7 @@ public class CassandraAuthTest {
   private CassandraHostConfigurator cassandraHostConfigurator;
   private HConnectionManager connectionManager;
   private String clusterName = "TestCluster";
-  
+
   /**
    * Set embedded cassandra up and spawn it in a new thread.
    */
@@ -135,11 +135,11 @@ public class CassandraAuthTest {
     String ksid2 = cassandraCluster.dropKeyspace("DynKeyspace");
     assertNotNull(ksid2);
   }
-  
+
   @Test
   public void testInsertAndGetAndRemove() throws IllegalArgumentException, NoSuchElementException,
   IllegalStateException, HNotFoundException, Exception {
-    KeyspaceService keyspace = new KeyspaceServiceImpl("Keyspace1", new QuorumAllConsistencyLevelPolicy(), 
+    KeyspaceService keyspace = new KeyspaceServiceImpl("Keyspace1", new QuorumAllConsistencyLevelPolicy(),
         connectionManager, FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE, user1Credentials);
 
     // insert value
@@ -177,7 +177,7 @@ public class CassandraAuthTest {
   @Test
   public void testInsertAndGetAndRemoveBadAuth() throws IllegalArgumentException, NoSuchElementException,
   IllegalStateException, HNotFoundException, Exception {
-    KeyspaceService keyspace = new KeyspaceServiceImpl("Keyspace1", new QuorumAllConsistencyLevelPolicy(), 
+    KeyspaceService keyspace = new KeyspaceServiceImpl("Keyspace1", new QuorumAllConsistencyLevelPolicy(),
         connectionManager, FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE, user1CredentialsBad);
     try {
       // insert value

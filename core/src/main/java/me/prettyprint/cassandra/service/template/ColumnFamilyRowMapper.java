@@ -2,7 +2,7 @@ package me.prettyprint.cassandra.service.template;
 
 /**
  * Converts the contents of a standard column family row into an object.
- * 
+ *
  * @author david
  * @since Mar 10, 2011
  * @param <K>

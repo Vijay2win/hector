@@ -54,7 +54,7 @@ public final class BatchMutation<K> {
     addMutation(key, columnFamilies, mutation);
     return this;
   }
-  
+
   /**
    * Add a SuperColumn insertion (or update) to the batch mutation request.
    */
@@ -65,7 +65,7 @@ public final class BatchMutation<K> {
     addMutation(key, columnFamilies, mutation);
     return this;
   }
-  
+
   /**
    * Add a ColumnCounter insertion (or update)
    */
@@ -75,11 +75,11 @@ public final class BatchMutation<K> {
     addMutation(key, columnFamilies, mutation);
     return this;
   }
-  
+
   /**
    * Add a SuperColumnCounter insertion (or update)
    */
-  public BatchMutation<K> addSuperCounterInsertion(K key, List<String> columnFamilies, 
+  public BatchMutation<K> addSuperCounterInsertion(K key, List<String> columnFamilies,
       CounterSuperColumn counterSuperColumn) {
     Mutation mutation = new Mutation();
     mutation.setColumn_or_supercolumn(new ColumnOrSuperColumn().setCounter_super_column(counterSuperColumn));
@@ -96,7 +96,7 @@ public final class BatchMutation<K> {
     addMutation(key, columnFamilies, mutation);
     return this;
   }
-  
+
 
   private void addMutation(K key, List<String> columnFamilies, Mutation mutation) {
     Map<String, List<Mutation>> innerMutationMap = getInnerMutationMap(key);
@@ -111,7 +111,7 @@ public final class BatchMutation<K> {
     }
     mutationMap.put(keySerializer.toByteBuffer(key), innerMutationMap);
   }
-  
+
 
 
   private Map<String, List<Mutation>> getInnerMutationMap(K key) {
@@ -121,7 +121,7 @@ public final class BatchMutation<K> {
     }
     return innerMutationMap;
   }
-  
+
   Map<ByteBuffer,Map<String,List<Mutation>>> getMutationMap() {
     return mutationMap;
   }

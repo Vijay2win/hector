@@ -66,7 +66,7 @@ public HThriftClient borrowClient() throws HectorException {
       if ( tillExhausted > 0 ) {
         // if we start with #of threads == getMaxActive, we could trigger this condition
         // replace addClientToPoolGently(new HThriftClient(cassandraHost).open()) with immediate acquisition
-        return greedyCreate();        
+        return greedyCreate();
       }
       // blocked take on the queue if we are configured to wait forever
       if ( log.isDebugEnabled() ) {
@@ -109,7 +109,7 @@ public HThriftClient borrowClient() throws HectorException {
 
     return cassandraClient;
   }
-  
+
   /**
    * Used when we still have room to grow. Return an HThriftClient without
    * having to wait on polling logic. (But still increment all the counters)

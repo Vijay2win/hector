@@ -91,7 +91,7 @@ public class CassandraClusterTest extends BaseEmbededServerSetupTest {
     String cfid2 = cassandraCluster.dropColumnFamily("Keyspace1", "DynCf");
     assertNotNull(cfid2);
   }
-  
+
   @Test
   public void testTruncateColumnFamily() throws Exception {
     ColumnFamilyDefinition cfDef = HFactory.createColumnFamilyDefinition("Keyspace1", "TruncateableCf");
@@ -115,65 +115,65 @@ public class CassandraClusterTest extends BaseEmbededServerSetupTest {
     String ksid2 = cassandraCluster.dropKeyspace("DynKeyspace");
     assertNotNull(ksid2);
   }
-  
+
   @Test
   public void testEditKeyspace() throws Exception {
-        
+
     BasicColumnFamilyDefinition columnFamilyDefinition = new BasicColumnFamilyDefinition();
     columnFamilyDefinition.setKeyspaceName("DynKeyspace2");
-    columnFamilyDefinition.setName("DynamicCF");    
-    
+    columnFamilyDefinition.setName("DynamicCF");
+
     ColumnFamilyDefinition cfDef = new ThriftCfDef(columnFamilyDefinition);
-    
-    KeyspaceDefinition keyspaceDefinition = 
+
+    KeyspaceDefinition keyspaceDefinition =
         HFactory.createKeyspaceDefinition("DynKeyspace2", "org.apache.cassandra.locator.SimpleStrategy", 1, Arrays.asList(cfDef));
-    
+
     cassandraCluster.addKeyspace(keyspaceDefinition);
-    
-    keyspaceDefinition = 
+
+    keyspaceDefinition =
       HFactory.createKeyspaceDefinition("DynKeyspace2", "org.apache.cassandra.locator.SimpleStrategy", 2, null);
-    
+
     cassandraCluster.updateKeyspace(keyspaceDefinition);
-    
+
     KeyspaceDefinition fromCluster = cassandraCluster.describeKeyspace("DynKeyspace2");
     assertEquals(2,fromCluster.getReplicationFactor());
     cassandraCluster.dropKeyspace("DynKeyspace2");
   }
-  
+
   @Test
   public void testEditColumnFamily() throws Exception {
-        
+
     BasicColumnFamilyDefinition columnFamilyDefinition = new BasicColumnFamilyDefinition();
     columnFamilyDefinition.setKeyspaceName("DynKeyspace3");
-    columnFamilyDefinition.setName("DynamicCF");    
-    
+    columnFamilyDefinition.setName("DynamicCF");
+
     ColumnFamilyDefinition cfDef = new ThriftCfDef(columnFamilyDefinition);
-    
-    KeyspaceDefinition keyspaceDefinition = 
+
+    KeyspaceDefinition keyspaceDefinition =
         HFactory.createKeyspaceDefinition("DynKeyspace3", "org.apache.cassandra.locator.SimpleStrategy", 1, Arrays.asList(cfDef));
-    
+
     cassandraCluster.addKeyspace(keyspaceDefinition);
-    
-    
+
+
     KeyspaceDefinition fromCluster = cassandraCluster.describeKeyspace("DynKeyspace3");
     cfDef = fromCluster.getCfDefs().get(0);
-    
+
     columnFamilyDefinition = new BasicColumnFamilyDefinition(cfDef);
     BasicColumnDefinition columnDefinition = new BasicColumnDefinition();
     columnDefinition.setName(StringSerializer.get().toByteBuffer("birthdate"));
     columnDefinition.setIndexType(ColumnIndexType.KEYS);
     columnDefinition.setValidationClass(ComparatorType.LONGTYPE.getClassName());
     columnFamilyDefinition.addColumnDefinition(columnDefinition);
-    
+
     columnDefinition = new BasicColumnDefinition();
-    columnDefinition.setName(StringSerializer.get().toByteBuffer("nonindexed_field"));    
+    columnDefinition.setName(StringSerializer.get().toByteBuffer("nonindexed_field"));
     columnDefinition.setValidationClass(ComparatorType.LONGTYPE.getClassName());
-    columnFamilyDefinition.addColumnDefinition(columnDefinition);    
-    
+    columnFamilyDefinition.addColumnDefinition(columnDefinition);
+
     cassandraCluster.updateColumnFamily(new ThriftCfDef(columnFamilyDefinition));
-    
+
     fromCluster = cassandraCluster.describeKeyspace("DynKeyspace3");
-    
+
     assertEquals("birthdate",StringSerializer.get().fromByteBuffer(fromCluster.getCfDefs().get(0).getColumnMetadata().get(0).getName()));
     assertEquals("nonindexed_field",StringSerializer.get().fromByteBuffer(fromCluster.getCfDefs().get(0).getColumnMetadata().get(1).getName()));
   }

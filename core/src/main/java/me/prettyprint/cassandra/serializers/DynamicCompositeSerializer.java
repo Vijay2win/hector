@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package me.prettyprint.cassandra.serializers;
 
@@ -12,7 +12,7 @@ import me.prettyprint.hector.api.ddl.ComparatorType;
 
 /**
  * @author Todd Nine
- * 
+ *
  */
 public class DynamicCompositeSerializer extends
     AbstractSerializer<DynamicComposite> {

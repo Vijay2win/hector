@@ -11,7 +11,7 @@ import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 
 public class MappedSuperCfResultWrapper<K, SN, N, V> extends SuperCfResultWrapper<K, SN, N> implements
     MappedSuperCfResult<K, SN, N, V> {
-  
+
   private SuperCfRowMapper<K, SN, N, V> rowMapper;
 
   public MappedSuperCfResultWrapper(
@@ -25,10 +25,10 @@ public class MappedSuperCfResultWrapper<K, SN, N, V> extends SuperCfResultWrappe
   }
 
   @Override
-  public V getRow() { 
+  public V getRow() {
     return rowMapper.mapRow(this);
   }
-  
-  
+
+
 
 }

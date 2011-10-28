@@ -32,7 +32,7 @@ import org.apache.thrift.protocol.TProtocol;
 /**
  * For creating wrappers around the Cassandra client in order to perform pre and
  * post processing
- * 
+ *
  * @author Ed Anuff
  */
 

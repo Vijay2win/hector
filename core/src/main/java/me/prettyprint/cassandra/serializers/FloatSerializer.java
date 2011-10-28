@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 /**
  * Uses IntSerializer via translating Float objects to and from raw long bytes form.
- * 
+ *
  * @author Todd Nine
  */
 public class FloatSerializer extends AbstractSerializer<Float> {
@@ -14,7 +14,7 @@ public class FloatSerializer extends AbstractSerializer<Float> {
   public static FloatSerializer get() {
     return instance;
   }
-  
+
   @Override
   public ByteBuffer toByteBuffer(Float obj) {
     return IntegerSerializer.get().toByteBuffer(Float.floatToRawIntBits(obj));

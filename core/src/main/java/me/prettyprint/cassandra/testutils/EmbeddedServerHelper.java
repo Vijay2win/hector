@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Ran Tavory (rantav@gmail.com)
- * 
+ *
  */
 public class EmbeddedServerHelper {
   private static Logger log = LoggerFactory.getLogger(EmbeddedServerHelper.class);
@@ -35,7 +35,7 @@ public class EmbeddedServerHelper {
   private EmbeddedCassandraService cassandra;
   private final String yamlFile;
   static CassandraDaemon cassandraDaemon;
-  
+
   public EmbeddedServerHelper() {
     this("/cassandra.yaml");
   }
@@ -43,12 +43,12 @@ public class EmbeddedServerHelper {
   public EmbeddedServerHelper(String yamlFile) {
     this.yamlFile = yamlFile;
   }
-  
-  static ExecutorService executor = Executors.newSingleThreadExecutor(); 
+
+  static ExecutorService executor = Executors.newSingleThreadExecutor();
 
   /**
    * Set embedded cassandra up and spawn it in a new thread.
-   * 
+   *
    * @throws TTransportException
    * @throws IOException
    * @throws InterruptedException
@@ -68,7 +68,7 @@ public class EmbeddedServerHelper {
     loadSchemaFromYaml();
     //loadYamlTables();
     log.info("Starting executor");
-    
+
     executor.execute(new CassandraRunner());
     log.info("Started executor");
     try
@@ -101,7 +101,7 @@ public class EmbeddedServerHelper {
 
   /**
    * Copies a resource from within the jar to a directory.
-   * 
+   *
    * @param resource
    * @param directory
    * @throws IOException
@@ -125,14 +125,14 @@ public class EmbeddedServerHelper {
 
   /**
    * Creates a directory
-   * 
+   *
    * @param dir
    * @throws IOException
    */
   private static void mkdir(String dir) throws IOException {
     FileUtils.createDirectory(dir);
   }
-  
+
 
   public static void cleanupAndLeaveDirs() throws IOException
   {
@@ -174,25 +174,25 @@ public class EmbeddedServerHelper {
       {
           throw new RuntimeException(e);
       }
-  }  
-  
-  public static void loadSchemaFromYaml()  
+  }
+
+  public static void loadSchemaFromYaml()
   {
     EmbeddedSchemaLoader.loadSchema();
-      
-  }  
 
-  
-  class CassandraRunner implements Runnable {    
-    
+  }
+
+
+  class CassandraRunner implements Runnable {
+
     @Override
     public void run() {
 
       cassandraDaemon = new CassandraDaemon();
-     
+
       cassandraDaemon.activate();
 
     }
-    
+
   }
 }

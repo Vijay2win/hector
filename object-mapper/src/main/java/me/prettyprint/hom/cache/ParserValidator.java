@@ -10,5 +10,5 @@ public interface ParserValidator {
   <T> void parse(ClassCacheMgr cacheMgr, Annotation anno, CFMappingDef<T> cfMapDef);
 
   <T> void validateAndSetDefaults(ClassCacheMgr cacheMgr, CFMappingDef<T> cfMapDef);
-  
+
 }

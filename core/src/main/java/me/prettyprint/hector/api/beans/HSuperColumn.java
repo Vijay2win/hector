@@ -42,7 +42,7 @@ public interface HSuperColumn<SN, N, V> {
   Serializer<SN> getNameSerializer();
 
   byte[] getNameBytes();
-  
+
   ByteBuffer getNameByteBuffer();
 
   Serializer<SN> getSuperNameSerializer();

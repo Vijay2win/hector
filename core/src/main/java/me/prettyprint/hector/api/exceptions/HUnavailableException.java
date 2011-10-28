@@ -6,7 +6,7 @@ package me.prettyprint.hector.api.exceptions;
  */
 public final class HUnavailableException extends HectorException {
 
-  private static final String ERR_MSG = 
+  private static final String ERR_MSG =
     ": May not be enough replicas present to handle consistency level.";
   private static final long serialVersionUID = 1971498442136497970L;
 

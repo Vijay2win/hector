@@ -54,7 +54,7 @@ public class NodeAutoDiscoverService extends BackgroundCassandraHostService {
     }
 
   }
-  
+
   public void doAddNodes() {
     if ( log.isDebugEnabled() ) {
       log.debug("Auto discovery service running...");

@@ -4,9 +4,9 @@ import java.nio.ByteBuffer;
 
 /**
  * Converts bytes to Integer and vice versa
- * 
+ *
  * @author Bozhidar Bozhanov
- * 
+ *
  */
 public final class IntegerSerializer extends AbstractSerializer<Integer> {
 
@@ -35,7 +35,7 @@ public final class IntegerSerializer extends AbstractSerializer<Integer> {
     int in = byteBuffer.getInt();
     return in;
   }
-  
+
   @Override
   public Integer fromBytes(byte[] bytes) {
     ByteBuffer bb = ByteBuffer.allocate(4).put(bytes, 0, 4);

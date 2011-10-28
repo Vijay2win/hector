@@ -12,15 +12,15 @@ import org.apache.cassandra.thrift.ColumnOrSuperColumn;
 public class MappedColumnFamilyResultWrapper<K, N, V> extends ColumnFamilyResultWrapper<K, N> implements MappedColumnFamilyResult<K, N, V>{
 
   private ColumnFamilyRowMapper<K, N, V> rowMapper;
-  
+
   public MappedColumnFamilyResultWrapper(Serializer<K> keySerializer,
       Serializer<N> columnNameSerializer,
       ExecutionResult<Map<ByteBuffer, List<ColumnOrSuperColumn>>> executionResult, ColumnFamilyRowMapper mapper) {
-    super(keySerializer, columnNameSerializer, executionResult);    
+    super(keySerializer, columnNameSerializer, executionResult);
   }
 
   @Override
-  public V getRow() {  
+  public V getRow() {
     return rowMapper.mapRow(this);
   }
 

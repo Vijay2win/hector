@@ -33,7 +33,7 @@ public final class ThriftSliceCounterQuery<K, N> extends AbstractSliceQuery<K, N
   public ThriftSliceCounterQuery(Keyspace k,
       Serializer<K> keySerializer,
       Serializer<N> nameSerializer) {
-	// The reason of Longserializer is just to 
+	// The reason of Longserializer is just to
     super(k, keySerializer, nameSerializer, LongSerializer.get());
   }
 

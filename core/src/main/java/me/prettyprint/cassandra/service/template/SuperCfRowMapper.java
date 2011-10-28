@@ -3,7 +3,7 @@ package me.prettyprint.cassandra.service.template;
 /**
  * Converts the contents of a given super column into an object. It is passed a
  * results object with the data of the current super column.
- * 
+ *
  * @author david
  * @since Mar 10, 2011
  * @param <K>

@@ -93,16 +93,16 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     ko = null;
     cluster = null;
   }
-  
+
   @Test
   public void testInsertGetRemoveCounter() {
     String cf = "Counter1";
     Mutator<String> m = createMutator(ko, se);
-    MutationResult mr = m.insertCounter("testInsertGetRemoveCounter", cf, 
+    MutationResult mr = m.insertCounter("testInsertGetRemoveCounter", cf,
         createCounterColumn("testInsertGetRemoveCounter_name", 25));
 
     log.debug("insert execution time: {}", mr.getExecutionTimeMicro());
-    
+
     // get value
     CounterQuery<String, String> q = createCounterColumnQuery(ko, se, se);
     q.setColumnFamily(cf).setName("testInsertGetRemoveCounter_name");
@@ -116,8 +116,8 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     assertEquals(25, value.longValue());
     String name = c.getName();
     assertEquals("testInsertGetRemoveCounter_name", name);
-    assertEquals(q, r.getQuery());   
-    
+    assertEquals(q, r.getQuery());
+
     // remove value
     m = createMutator(ko, se);
     MutationResult mr2 = m.deleteCounter("testInsertGetRemoveCounter", cf, "testInsertGetRemoveCounter_name", se);
@@ -130,7 +130,7 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     assertNotNull(r2);
     assertNull("Value should have been deleted", r2.get());
   }
-  
+
   @Test
   public void testIncrementDecrementCounter() {
     String cf = "Counter1";
@@ -138,7 +138,7 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     createMutator(ko, se).decrementCounter("testIncrementDecrementCounter", cf, "testIncrementDecrementCounter_name", 2);
 
     // The total in the counter is 5. (7 - 2)
-    
+
     // get value
     CounterQuery<String, String> q = createCounterColumnQuery(ko, se, se);
     q.setColumnFamily(cf).setName("testIncrementDecrementCounter_name");
@@ -188,7 +188,7 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     m = createMutator(ko, se);
     MutationResult mr2 = m.delete("testInsertGetRemove", cf,
         "testInsertGetRemove", se);
-    
+
 
     // get already removed value
     ColumnQuery<String, String, String> q2 = createColumnQuery(ko, se, se, se);
@@ -212,7 +212,7 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
               se, se));
     }
     m.execute();
-    
+
     // get value
     ColumnQuery<String, String, String> q = createColumnQuery(ko, se, se, se);
     q.setName("testInsertGetRemove").setColumnFamily(cf);
@@ -442,7 +442,7 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
 
     deleteColumns(cleanup);
   }
-  
+
   @Test
   public void testCounterSliceQuery() {
     String cf = "Counter1";
@@ -458,29 +458,29 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     SliceCounterQuery<String, String> q = createCounterSliceQuery(ko, se, se);
     q.setColumnFamily(cf);
     q.setKey("testCounterSliceQuery_key");
-    
+
     // try with column name first
     q.setColumnNames("4", "5", "6");
     QueryResult<CounterSlice<String>> r = q.execute();
-    
+
     assertNotNull(r);
-    
+
     CounterSlice<String> slice = r.get();
-    
+
     assertNotNull(slice);
-    
+
     assertEquals(3, slice.getColumns().size());
-    
+
     // Test slice.getColumnByName
     assertEquals(4, slice.getColumnByName("4").getValue().longValue());
     assertEquals(5, slice.getColumnByName("5").getValue().longValue());
     assertEquals(6, slice.getColumnByName("6").getValue().longValue());
-    
+
     // Test slice.getColumns
     List<HCounterColumn<String>> columns = slice.getColumns();
     assertNotNull(columns);
     assertEquals(3, columns.size());
-    
+
     // Cleanup
     mutator.deleteCounter("testCounterSliceQuery_key", cf, null, se);
     mutator.execute();
@@ -1036,9 +1036,9 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
   /**
    * A class describing what kind of cleanup is required at the end of the test.
    * Just some bookeeping, that's all.
-   * 
+   *
    * @author Ran Tavory
-   * 
+   *
    */
   private static class TestCleanupDescriptor {
     public final String cf;

@@ -31,19 +31,19 @@ import me.prettyprint.hector.api.factory.HFactory;
  * contents of an object. This would likely by implemented as an anonymous inner
  * class with access to a final object in scope. It would update the given row
  * with the object's data.
- * 
+ *
  * This is currently implemented as an abstract base class instead of an
  * interface. This could change in the future. Being an abstract base class
  * allows CassandraTemplate to initialize this instance through package scope
  * field access. This means that implementation of update() simply makes
  * consecutive calls to various set****() methods which already have the
  * contextual information they need to update the correct row.
- * 
+ *
  * The downside of this approach is that the updater is essentially stateful and
  * cannot be used concurrently. The alternative is to pass an object in to
  * update() as a parameter with the setter methods, leaving the updater to be
  * stateless.
- * 
+ *
  * @author david
  * @since Mar 10, 2011
  * @param <K>
@@ -62,17 +62,17 @@ public class SuperCfUpdater<K,SN,N> extends AbstractTemplateUpdater<K, N> {
   private int sColPos;
   private HSuperColumnImpl<SN,N,?> activeColumn;
   private List<HColumn> subColumns;
-  
+
   public SuperCfUpdater(SuperCfTemplate<K,SN,N> sTemplate, ColumnFactory columnFactory) {
     super((AbstractColumnFamilyTemplate<K, N>) sTemplate, columnFactory);
     this.template = sTemplate;
   }
-  
-  
-  
+
+
+
   @Override
-  public SuperCfUpdater<K, SN, N> addKey(K key) {        
-    
+  public SuperCfUpdater<K, SN, N> addKey(K key) {
+
     if ( keys != null && keys.size() > 0 ) {
       updateInternal();
     }
@@ -87,30 +87,30 @@ public class SuperCfUpdater<K,SN,N> extends AbstractTemplateUpdater<K, N> {
   public SuperCfUpdater<K,SN,N> addSuperColumn(SN sColumnName) {
     if ( sColumnNames.size() > 0 ) {
       updateInternal();
-      sColPos++;      
+      sColPos++;
     }
-    
+
     subColumns = new ArrayList<HColumn>();
-    
+
     sColumnNames.add(sColumnName);
-    
-    
+
+
     return this;
   }
-  
+
   public SN getCurrentSuperColumn() {
     return sColumnNames.get(sColPos);
   }
-  
+
   /**
-   * collapse the state of the active HSuperColumn 
+   * collapse the state of the active HSuperColumn
    */
-  void updateInternal() {    
+  void updateInternal() {
     // HSuperColumnImpl needs a refactor, this construction is lame.
     // the value serializer is not used in HSuperColumnImpl, so this is safe for name
     if ( !subColumns.isEmpty() ) {
       log.debug("Adding column {} for key {} and cols {}", new Object[]{getCurrentSuperColumn(), getCurrentKey(), subColumns});
-      HSuperColumnImpl<SN, N, ?> column = new HSuperColumnImpl(getCurrentSuperColumn(), subColumns, 
+      HSuperColumnImpl<SN, N, ?> column = new HSuperColumnImpl(getCurrentSuperColumn(), subColumns,
           0, template.getTopSerializer(), template.getSubSerializer(), TypeInferringSerializer.get());
       template.getMutator().addInsertion(getCurrentKey(), template.getColumnFamily(), column);
     }
@@ -121,14 +121,14 @@ public class SuperCfUpdater<K,SN,N> extends AbstractTemplateUpdater<K, N> {
    * Deletes the super column and all of its sub columns
    */
   public void deleteSuperColumn() {
-    //template.getMutator().addDeletion(getCurrentKey(), template.getColumnFamily(), 
-    //    getCurrentSuperColumn(), template.getTopSerializer());    
-    template.getMutator().addSuperDelete(getCurrentKey(), template.getColumnFamily(), 
-        getCurrentSuperColumn(), template.getTopSerializer());  
+    //template.getMutator().addDeletion(getCurrentKey(), template.getColumnFamily(),
+    //    getCurrentSuperColumn(), template.getTopSerializer());
+    template.getMutator().addSuperDelete(getCurrentKey(), template.getColumnFamily(),
+        getCurrentSuperColumn(), template.getTopSerializer());
   }
-  
+
   public void deleteSubColumn(N columnName) {
-    template.getMutator().addSubDelete(getCurrentKey(), template.getColumnFamily(), 
+    template.getMutator().addSubDelete(getCurrentKey(), template.getColumnFamily(),
         getCurrentSuperColumn(), columnName, template.getTopSerializer(), template.getSubSerializer());
   }
 
@@ -154,7 +154,7 @@ public class SuperCfUpdater<K,SN,N> extends AbstractTemplateUpdater<K, N> {
 
   public void setBoolean(N subColumnName, Boolean value) {
     subColumns.add(columnFactory.createColumn(subColumnName, value, template.getEffectiveClock(),
-        template.getSubSerializer(), BooleanSerializer.get())); 
+        template.getSubSerializer(), BooleanSerializer.get()));
   }
 
   public void setByteArray(N subColumnName, byte[] value) {
@@ -166,17 +166,17 @@ public class SuperCfUpdater<K,SN,N> extends AbstractTemplateUpdater<K, N> {
     subColumns.add(columnFactory.createColumn(subColumnName, value, template.getEffectiveClock(),
         template.getSubSerializer(), ByteBufferSerializer.get()));
   }
-  
+
   public void setDate(N subColumnName, Date value) {
     subColumns.add(columnFactory.createColumn(subColumnName, value, template.getEffectiveClock(),
         template.getSubSerializer(), DateSerializer.get()));
   }
-  
+
   public void setDouble(N subColumnName, Double value) {
     subColumns.add(columnFactory.createColumn(subColumnName, value, template.getEffectiveClock(),
         template.getSubSerializer(), DoubleSerializer.get()));
   }
-  
+
   public <V> void setValue(N subColumnName, V value, Serializer<V> serializer) {
     subColumns.add(columnFactory.createColumn(subColumnName, value, template.getEffectiveClock(),
         template.getSubSerializer(), serializer));

@@ -296,13 +296,13 @@ public final class CassandraHostConfigurator implements Serializable {
   }
 
   /**
-   * Enable SO_KEEPALIVE on the underlying socket. OFF by default (per java.net.Socket) 
-   * 
+   * Enable SO_KEEPALIVE on the underlying socket. OFF by default (per java.net.Socket)
+   *
    */
   public void setUseSocketKeepalive(boolean useSocketKeepalive) {
     this.useSocketKeepalive = useSocketKeepalive;
   }
 
-  
+
 
 }

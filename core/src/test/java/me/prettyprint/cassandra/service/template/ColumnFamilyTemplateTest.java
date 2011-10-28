@@ -10,25 +10,25 @@ import me.prettyprint.hector.api.factory.HFactory;
 import org.junit.Test;
 
 public class ColumnFamilyTemplateTest extends BaseColumnFamilyTemplateTest {
-  
+
   @Test
   public void testCreateSelect() {
     ColumnFamilyTemplate<String, String> template = new ThriftColumnFamilyTemplate<String, String>(keyspace, "Standard1", se, se, HFactory.createMutator(keyspace, se));
-        
-    ColumnFamilyUpdater updater = template.createUpdater("key1"); 
+
+    ColumnFamilyUpdater updater = template.createUpdater("key1");
     updater.setString("column1","value1");
     template.update(updater);
-    
+
     template.addColumn("column1", se);
-    ColumnFamilyResult wrapper = template.queryColumns("key1");    
+    ColumnFamilyResult wrapper = template.queryColumns("key1");
     assertEquals("value1",wrapper.getString("column1"));
-        
+
   }
 
   @Test
   public void testCreateSelectTemplate() {
     ColumnFamilyTemplate<String, String> template = new ThriftColumnFamilyTemplate<String, String>(keyspace, "Standard1", se, se, HFactory.createMutator(keyspace, se));
-    ColumnFamilyUpdater updater = template.createUpdater("key1"); 
+    ColumnFamilyUpdater updater = template.createUpdater("key1");
     updater.setString("column1","value1");
     updater.update();
     template.setCount(10);
@@ -39,34 +39,34 @@ public class ColumnFamilyTemplateTest extends BaseColumnFamilyTemplateTest {
         return results.getString("column1");
       }
     });
-    assertEquals("value1",value);           
+    assertEquals("value1",value);
   }
-  
+
   @Test
   public void testQueryMultiget() {
-    ColumnFamilyTemplate<String, String> template = new ThriftColumnFamilyTemplate<String, String>(keyspace, "Standard1", se, se, HFactory.createMutator(keyspace, se));    
-    ColumnFamilyUpdater updater = template.createUpdater("mg_key1"); 
+    ColumnFamilyTemplate<String, String> template = new ThriftColumnFamilyTemplate<String, String>(keyspace, "Standard1", se, se, HFactory.createMutator(keyspace, se));
+    ColumnFamilyUpdater updater = template.createUpdater("mg_key1");
     updater.setString("column1","value1");
     updater.addKey("mg_key2");
     updater.setString("column1","value2");
     updater.addKey("mg_key3");
     updater.setString("column1","value3");
     template.update(updater);
-    
+
     template.addColumn("column1", se);
     ColumnFamilyResult wrapper = template.queryColumns(Arrays.asList("mg_key1", "mg_key2", "mg_key3"));
-    assertEquals("value1",wrapper.getString("column1"));    
+    assertEquals("value1",wrapper.getString("column1"));
     wrapper.next();
     assertEquals("value2",wrapper.getString("column1"));
     wrapper.next();
     assertEquals("value3",wrapper.getString("column1"));
   }
-  
+
   @Test
   public void testHasNoResults() {
-    ColumnFamilyTemplate<String, String> template = new ThriftColumnFamilyTemplate<String, String>(keyspace, "Standard1", se, se, HFactory.createMutator(keyspace, se));    
+    ColumnFamilyTemplate<String, String> template = new ThriftColumnFamilyTemplate<String, String>(keyspace, "Standard1", se, se, HFactory.createMutator(keyspace, se));
     assertFalse(template.queryColumns("noresults").hasResults());
-    
+
   }
 
 }

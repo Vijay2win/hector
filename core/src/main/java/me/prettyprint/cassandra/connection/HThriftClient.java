@@ -59,18 +59,18 @@ public class HThriftClient {
   }
 
   public Cassandra.Client getCassandra(String keyspaceNameArg) {
-    getCassandra();    
+    getCassandra();
     if ( keyspaceNameArg != null && !StringUtils.equals(keyspaceName, keyspaceNameArg)) {
       if ( log.isDebugEnabled() )
         log.debug("keyspace reseting from {} to {}", keyspaceName, keyspaceNameArg);
       keyspaceName = keyspaceNameArg;
       try {
-        cassandraClient.set_keyspace(keyspaceName);        
+        cassandraClient.set_keyspace(keyspaceName);
       } catch (InvalidRequestException ire) {
         throw new HInvalidRequestException(ire);
       } catch (TException e) {
         throw new HectorTransportException(e);
-      } 
+      }
 
     }
     return cassandraClient;
@@ -118,7 +118,7 @@ public class HThriftClient {
     } else {
       transport = socket;
     }
-    
+
     try {
       transport.open();
     } catch (TTransportException e) {
@@ -172,7 +172,7 @@ public class HThriftClient {
   public void startToUse() {
       useageStartTime = System.currentTimeMillis();
   }
-  
+
   /**
    * @return Time in MS since it was used.
    */

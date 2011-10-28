@@ -16,9 +16,9 @@ import me.prettyprint.hector.api.query.QueryResult;
 /**
  * Return an InputStream which retrieve columns from a row which stores chunk of
  * data. See also {@link ChunkOutputStream}
- * 
+ *
  * This implementation is not thread-safe!
- * 
+ *
  * @param <T>
  */
 public class ChunkInputStream<T> extends InputStream {
@@ -40,7 +40,7 @@ public class ChunkInputStream<T> extends InputStream {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.io.InputStream#read()
    */
   public int read() throws IOException {
@@ -54,7 +54,7 @@ public class ChunkInputStream<T> extends InputStream {
 
   /**
    * Fetch the next chunk.
-   * 
+   *
    * @return exists if there was a chunk to fetch.
    * @throws IOException
    */

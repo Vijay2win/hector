@@ -14,9 +14,9 @@ import me.prettyprint.hector.api.Serializer;
  * Tests for: <br>
  * 1. Valid serialization roundtrip for a collection of objects. <br>
  * 2. Proper handling of NULL.
- * 
+ *
  * @author shuzhang0@gmail.com
- * 
+ *
  * @param <T>
  *          the type which the Serializer under test can serialize.
  */

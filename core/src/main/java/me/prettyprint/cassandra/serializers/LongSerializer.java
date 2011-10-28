@@ -8,9 +8,9 @@ import me.prettyprint.hector.api.ddl.ComparatorType;
 
 /**
  * Converts bytes to Long and vise a versa
- * 
+ *
  * @author Ran Tavory
- * 
+ *
  */
 public final class LongSerializer extends AbstractSerializer<Long> {
 

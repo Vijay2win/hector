@@ -17,7 +17,7 @@ public class SimpleCassandraDaoTest extends BaseEmbededServerSetupTest {
 
   @Resource
   private SimpleCassandraDao simpleCassandraDao;
-  
+
   @Test
   public void testInsertGetDelete() {
     simpleCassandraDao.insert("fk1", "colName1", "value1");
@@ -25,5 +25,5 @@ public class SimpleCassandraDaoTest extends BaseEmbededServerSetupTest {
     simpleCassandraDao.delete("colName1", "fk1");
     assertNull(simpleCassandraDao.get("fk1", "colName1"));
   }
-  
+
 }

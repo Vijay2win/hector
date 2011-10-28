@@ -6,13 +6,13 @@ public class MySerial implements Serializable {
 
   private int prop1;
   private long prop2;
-  
+
   public MySerial(int prop1, long prop2) {
     super();
     this.prop1 = prop1;
     this.prop2 = prop2;
   }
-  
+
   public int getProp1() {
     return prop1;
   }

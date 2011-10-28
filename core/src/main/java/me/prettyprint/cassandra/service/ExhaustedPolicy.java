@@ -11,11 +11,11 @@ public enum ExhaustedPolicy {
   /**
    * If the pool is full, fail with the exception {@link PoolExhaustedException}
    */
-  WHEN_EXHAUSTED_FAIL, 
+  WHEN_EXHAUSTED_FAIL,
   /**
    * When pool exhausted, grow.
    */
-  WHEN_EXHAUSTED_GROW, 
+  WHEN_EXHAUSTED_GROW,
   /**
    * Block the requesting thread when the pool is exhausted until new connections are available.
    */

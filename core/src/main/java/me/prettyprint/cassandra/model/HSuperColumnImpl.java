@@ -126,7 +126,7 @@ public final class HSuperColumnImpl<SN,N,V> implements HSuperColumn<SN, N, V> {
   public byte[] getNameBytes() {
     return superNameSerializer.toByteBuffer(getName()).array();
   }
-  
+
   public ByteBuffer getNameByteBuffer() {
     return superNameSerializer.toByteBuffer(getName());
   }

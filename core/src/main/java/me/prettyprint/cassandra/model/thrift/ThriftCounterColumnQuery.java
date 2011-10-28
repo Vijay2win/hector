@@ -26,9 +26,9 @@ import org.apache.cassandra.thrift.CounterColumn;
  * @param <V>
  *          value type
  */
-public class ThriftCounterColumnQuery<K, N> extends AbstractBasicQuery<K, N, HCounterColumn<N>> 
+public class ThriftCounterColumnQuery<K, N> extends AbstractBasicQuery<K, N, HCounterColumn<N>>
     implements CounterQuery<K, N> {
-	
+
   protected K key;
   protected N name;
 
@@ -40,7 +40,7 @@ public class ThriftCounterColumnQuery<K, N> extends AbstractBasicQuery<K, N, HCo
   public ThriftCounterColumnQuery(Keyspace keyspace) {
     super(keyspace, TypeInferringSerializer.<K> get(), TypeInferringSerializer.<N> get());
   }
-  
+
   public CounterQuery<K, N> setKey(K key) {
     this.key = key;
     return this;
@@ -50,7 +50,7 @@ public class ThriftCounterColumnQuery<K, N> extends AbstractBasicQuery<K, N, HCo
     this.name = name;
     return this;
   }
-  
+
   @SuppressWarnings("unchecked")
   @Override
   public CounterQuery<K, N> setColumnFamily(String cf) {

@@ -9,7 +9,7 @@ import me.prettyprint.hector.api.ddl.ComparatorType;
 
 /**
  * Serializer implementation for BigInteger
- * 
+ *
  * @author zznate
  */
 public final class BigIntegerSerializer extends AbstractSerializer<BigInteger> {

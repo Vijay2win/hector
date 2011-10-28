@@ -21,18 +21,18 @@ public interface HCounterColumn<N> {
 
   Long getValue();
 
-  
+
   /**
    * (Advanced) Returns the underlying ByteBuffer for the name via ByteBuffer.duplicate().
    */
   ByteBuffer getNameBytes();
-  
+
   HCounterColumn<N> clear();
-  
+
   int getTtl();
 
   HCounterColumn<N> setTtl(int ttl);
-  
+
   HCounterColumn<N> apply(Long value, int ttl);
 
   Serializer<N> getNameSerializer();

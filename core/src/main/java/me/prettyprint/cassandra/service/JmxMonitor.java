@@ -35,7 +35,7 @@ public class JmxMonitor {
 
   private JmxMonitor() {
     mbs = ManagementFactory.getPlatformMBeanServer();
-    monitors = new HashMap<String, CassandraClientMonitor>();    
+    monitors = new HashMap<String, CassandraClientMonitor>();
   }
 
   public static JmxMonitor getInstance() {

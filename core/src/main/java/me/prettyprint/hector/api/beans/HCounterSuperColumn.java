@@ -36,7 +36,7 @@ public interface HCounterSuperColumn<SN, N> {
   Serializer<SN> getNameSerializer();
 
   byte[] getNameBytes();
-  
+
   ByteBuffer getNameByteBuffer();
 
   Serializer<SN> getSuperNameSerializer();

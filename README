@@ -1,6 +1,6 @@
 The current 0.7.0 branch will work with Apache Cassandra 0.7.x. The master has been switched to tracking Apache Cassandra 0.8.0. Current releases on the downloads section should be cosidered production ready. You should always choose the most recent release for your version of Apache Cassandra.
 
-As of version 0.7.0-23, Hector artificats are deployed to Maven Central. If you use maven for your build system, you need only include the hector-core dependency and all related dependencies will be managed automatically. 
+As of version 0.7.0-23, Hector artificats are deployed to Maven Central. If you use maven for your build system, you need only include the hector-core dependency and all related dependencies will be managed automatically.
 ----------------------------------------------------------------------------------------------------
 
 Hector is a high level Java client for Apache Cassandra.
@@ -25,7 +25,7 @@ Some features provided by this client:
  o simple ORM layer that works
  o a type-safe approach to dealing with Apache Cassandra's data model
 
-Detailed documentation of Hector features and usage can be found on the wiki: 
+Detailed documentation of Hector features and usage can be found on the wiki:
 https://github.com/rantav/hector/wiki/User-Guide
 
 Some additional pages from the wiki that may be of interest:

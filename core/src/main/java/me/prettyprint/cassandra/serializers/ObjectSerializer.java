@@ -13,9 +13,9 @@ import me.prettyprint.hector.api.exceptions.HectorSerializationException;
 /**
  * The ObjectSerializer is used to turn objects into their binary
  * representations.
- * 
+ *
  * @author Bozhidar Bozhanov
- * 
+ *
  */
 public class ObjectSerializer extends AbstractSerializer<Object> implements
     Serializer<Object> {

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Used with @IdClass. Properties of this class must match @Id properties
  * defined by the entity.
- * 
+ *
  * @author B. Todd Burruss
  */
 public class MyCompositePK implements Serializable {
@@ -15,7 +15,7 @@ public class MyCompositePK implements Serializable {
 
   public MyCompositePK() {
   }
-  
+
   public MyCompositePK(int intProp1, String strProp1) {
     this.intProp1 = intProp1;
     this.strProp1 = strProp1;

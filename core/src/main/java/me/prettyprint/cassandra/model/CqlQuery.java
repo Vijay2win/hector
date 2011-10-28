@@ -26,14 +26,14 @@ import org.slf4j.LoggerFactory;
  * First cut at a CQL implementation. Not too much time has been spent here
  * as this API is currently a moving target. We have a lot of experience with
  * these hijinks by the Apache Cassandra team, so it was deemed prudent to do
- * something simple initially until the dust settles. 
- * 
+ * something simple initially until the dust settles.
+ *
  * You are expected to know what you are getting into if you plan on using
- * CQL queries in your application. Spend some time looking through the 
- * unit tests here in Hector and the Cassandra source tree. For a number of 
+ * CQL queries in your application. Spend some time looking through the
+ * unit tests here in Hector and the Cassandra source tree. For a number of
  * detailed examples, see test_cql.py in the test/system folder of the
  * Apache Cassandra source distribution.
- * 
+ *
  * Note: if you immediately get an exception such as:
  * "InvalidRequestException(why:cannot parse 'foo' as hex bytes)"
  * It means one of two things:
@@ -41,30 +41,30 @@ import org.slf4j.LoggerFactory;
  * <li>you have not formatted your query correct</li>
  * <li>You have not configured the correct validators on your column family</li>
  * </ol>
- * 
+ *
  * In both cases, even though the query is most likely a string, it is up to you to format
- * this query according to the comparator (used for the column name), key validator 
+ * this query according to the comparator (used for the column name), key validator
  * and value validator. This can be a little confusing as only the comparator is required.
  * The other two default to BytesType.
- * 
+ *
  * See the docs on {@link CqlRows} for additional details.
- * 
+ *
  * @author zznate
  *
  */
 public class CqlQuery<K, N, V> extends AbstractBasicQuery<K, N, CqlRows<K,N,V>> {
   private static Logger log = LoggerFactory.getLogger(CqlQuery.class);
-  
+
   private Serializer<V> valueSerializer;
   private ByteBuffer query;
   private boolean useCompression;
-  
+
   public CqlQuery(Keyspace k, Serializer<K> keySerializer,
       Serializer<N> nameSerializer, Serializer<V> valueSerializer) {
     super(k, keySerializer, nameSerializer);
     this.valueSerializer = valueSerializer;
   }
-  
+
   /**
    * Set the query as a String. Here for convienience. See above for some
    * caveats. Calls {@link StringSerializer#toByteBuffer(String)} directly.
@@ -75,21 +75,21 @@ public class CqlQuery<K, N, V> extends AbstractBasicQuery<K, N, CqlRows<K,N,V>> 
     this.query = StringSerializer.get().toByteBuffer(query);
     return this;
   }
-  
+
   public CqlQuery<K, N, V> setQuery(ByteBuffer qeury) {
     this.query = query;
     return this;
   }
-  
+
   public CqlQuery<K, N, V> useCompression() {
     useCompression = true;
     return this;
   }
-  
-  
+
+
   @Override
   public QueryResult<CqlRows<K, N, V>> execute() {
-    
+
     return new QueryResultImpl<CqlRows<K, N, V>>(
         keyspace.doExecuteOperation(new Operation<CqlRows<K, N, V>>(OperationType.READ) {
 
@@ -97,7 +97,7 @@ public class CqlQuery<K, N, V> extends AbstractBasicQuery<K, N, CqlRows<K,N,V>> 
           public CqlRows<K, N, V> execute(Client cassandra) throws HectorException {
             CqlRows<K, N, V> rows = null;
             try {
-              CqlResult result = cassandra.execute_cql_query(query, 
+              CqlResult result = cassandra.execute_cql_query(query,
                   useCompression ? Compression.GZIP : Compression.NONE);
               if ( log.isDebugEnabled() ) {
                 log.debug("Found CqlResult: {}", result);
@@ -113,7 +113,7 @@ public class CqlQuery<K, N, V> extends AbstractBasicQuery<K, N, CqlRows<K,N,V>> 
               default:
                 if ( result.getRowsSize() > 0 ) {
                   LinkedHashMap<ByteBuffer, List<Column>> ret = new LinkedHashMap<ByteBuffer, List<Column>>(result.getRowsSize());
-                  
+
                   for (Iterator<CqlRow> rowsIter = result.getRowsIterator(); rowsIter.hasNext(); ) {
                     CqlRow row = rowsIter.next();
                     ret.put(ByteBuffer.wrap(row.getKey()), row.getColumns());
@@ -128,7 +128,7 @@ public class CqlQuery<K, N, V> extends AbstractBasicQuery<K, N, CqlRows<K,N,V>> 
             }
             return rows;
           }
-        
+
         }), this);
   }
 

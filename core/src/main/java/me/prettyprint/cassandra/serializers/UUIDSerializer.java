@@ -9,9 +9,9 @@ import me.prettyprint.hector.api.ddl.ComparatorType;
 
 /**
  * A UUIDSerializer translates the byte[] to and from UUID types.
- * 
+ *
  * @author Ed Anuff
- * 
+ *
  */
 public final class UUIDSerializer extends AbstractSerializer<UUID> {
 

@@ -26,7 +26,7 @@ public final class ExceptionsTranslatorImpl implements ExceptionsTranslator {
     if (original instanceof HectorException) {
       return (HectorException) original;
     } else if (original instanceof TApplicationException) {
-      return new HCassandraInternalException(((TApplicationException)original).getType(), original.getMessage());    
+      return new HCassandraInternalException(((TApplicationException)original).getType(), original.getMessage());
     } else if (original instanceof TTransportException) {
       // if the underlying cause is a scoket timeout, reflect that directly
       // TODO this may be an issue on the Cassandra side which warrants ivestigation.

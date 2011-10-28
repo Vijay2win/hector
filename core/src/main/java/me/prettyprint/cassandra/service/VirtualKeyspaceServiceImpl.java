@@ -112,7 +112,7 @@ public class VirtualKeyspaceServiceImpl extends KeyspaceServiceImpl {
 
     return super.getSlice(ps.toByteBuffer(key), columnParent, predicate);
   }
-  
+
   @Override
   public List<CounterColumn> getCounterSlice(ByteBuffer key, ColumnParent columnParent,
       SlicePredicate predicate) throws HectorException {

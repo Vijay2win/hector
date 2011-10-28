@@ -118,38 +118,38 @@ public interface CassandraClientMonitorMBean {
    *
    */
   public List<String> getStatisticsPerPool();
-  
+
   /**
    * Add a host in the format of "[hostname]:[port]"
-   * 
+   *
    * @param hostStr
    * @return
    */
   boolean addCassandraHost(String hostStr);
-  
+
   /**
    * Remove a host in the format of "[hostname]:[port]"
    * @see {@link CassandraHost#equals(Object)} for how hosts are compared
-   * 
+   *
    * @param hostStr
    * @return
    */
   boolean removeCassandraHost(String hostStr);
-  
+
   /**
-   * @see {@link #removeCassandraHost(String)} above for semantics of the host string. 
+   * @see {@link #removeCassandraHost(String)} above for semantics of the host string.
    * @see {@link HConnectionManager#removeCassandraHost(CassandraHost)} for details of this operation.
    * @param hostStr
    * @return
    */
   boolean suspendCassandraHost(String hostStr);
-  
+
   /**
    * @see {@link #suspendCassandraHost(String)} above. This is the opposite.
    * @param hostStr
    * @return
    */
   boolean unsuspendCassandraHost(String hostStr);
-  
-  Set<String> getSuspendedCassandraHosts(); 
+
+  Set<String> getSuspendedCassandraHosts();
 }

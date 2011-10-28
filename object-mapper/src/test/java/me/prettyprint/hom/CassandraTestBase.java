@@ -52,7 +52,7 @@ public class CassandraTestBase {
     } catch (ConfigurationException ce) {
       throw new RuntimeException(ce);
     }
-    
+
     cassandraStarted = true;
   }
 

@@ -47,7 +47,7 @@ public class ThriftKsDef implements KeyspaceDefinition {
     setReplicationFactor(1);
     this.strategyClass = DEF_STRATEGY_CLASS;
   }
-  
+
   public ThriftKsDef(KeyspaceDefinition keyspaceDefinition) {
     name = keyspaceDefinition.getName();
     strategyClass = keyspaceDefinition.getStrategyClass();
@@ -93,7 +93,7 @@ public class ThriftKsDef implements KeyspaceDefinition {
   }
 
   public KsDef toThrift() {
-    KsDef def =  new KsDef(name, strategyClass, ThriftCfDef.toThriftList(cfDefs));    
+    KsDef def =  new KsDef(name, strategyClass, ThriftCfDef.toThriftList(cfDefs));
     def.setStrategy_options(strategyOptions);
     return def;
   }

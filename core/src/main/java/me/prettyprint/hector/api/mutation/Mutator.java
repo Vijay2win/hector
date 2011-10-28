@@ -28,7 +28,7 @@ public interface Mutator<K> {
 
   <N> MutationResult delete(final K key, final String cf, final N columnName,
       final Serializer<N> nameSerializer);
-  
+
   <N> MutationResult delete(final K key, final String cf, final N columnName,
       final Serializer<N> nameSerializer, long clock);
 
@@ -39,20 +39,20 @@ public interface Mutator<K> {
    */
   <SN, N> MutationResult subDelete(final K key, final String cf, final SN supercolumnName,
       final N columnName, final Serializer<SN> sNameSerializer, final Serializer<N> nameSerializer);
-  
+
   /**
    * Deletes a supercolumn immediately
    * @param <SN> super column type
    */
   <SN> MutationResult superDelete(K key, String cf, SN supercolumnName,
       Serializer<SN> sNameSerializer);
-  
+
   /**
    * batches a super column for deletion
-   * 
+   *
    */
   <SN> Mutator<K> addSuperDelete(K key, String cf, SN sColumnName, Serializer<SN> sNameSerializer);
-  
+
 
   // schedule an insertion to be executed in batch by the execute method
   // CAVEAT: a large number of calls with a typo in one of them will leave things in an
@@ -79,19 +79,19 @@ public interface Mutator<K> {
    * @return a mutator
    */
   <N> Mutator<K> addDeletion(K key, String cf, N columnName, Serializer<N> nameSerializer);
-  
+
   /**
    * Alternate form for easy deletion of the whole row.
-   * 
+   *
    * @param <N>
    * @param key
    * @return
    */
   <N> Mutator<K> addDeletion(K key, String cf);
-  
+
   /**
    * Same as above accept we add the clock
-   * 
+   *
    * @param <N>
    * @param key
    * @return
@@ -113,17 +113,17 @@ public interface Mutator<K> {
    */
   <N> Mutator<K> addDeletion(K key, String cf, N columnName, Serializer<N> nameSerializer, long clock);
 
-  
+
   <SN,N,V> Mutator<K> addSubDelete(K key, String cf, HSuperColumn<SN,N,V> sc);
 
   <SN,N,V> Mutator<K> addSubDelete(K key, String cf, HSuperColumn<SN,N,V> sc, long clock);
-  
+
   <SN,N> Mutator<K> addSubDelete(K key, String cf, SN sColumnName, N columnName, Serializer<SN> sNameSerializer, Serializer<N> nameSerialer);
-  
+
   <SN,N> Mutator<K> addSubDelete(K key, String cf, SN sColumnName, N columnName, Serializer<SN> sNameSerializer, Serializer<N> nameSerialer, long clock);
-  
-  
-  
+
+
+
   /**
    * Batch executes all mutations scheduled to this Mutator instance by addInsertion, addDeletion etc.
    * May throw a HectorException which is a RuntimeException.
@@ -135,23 +135,23 @@ public interface Mutator<K> {
    * Discards all pending mutations.
    */
   Mutator<K> discardPendingMutations();
-  
+
   // Support for counters
-  
+
   /** Simple and immediate insertion (increment/decrement) of a counter */
   <N> MutationResult insertCounter(final K key, final String cf, final HCounterColumn<N> c);
-  
+
   /** Simple and immediate insertion (increment/decrement) of a counter part of a super column */
   <SN, N> MutationResult insertCounter(final K key, final String cf, final HCounterSuperColumn<SN, N> superColumn);
-  
+
   /** Convenient method to increment a simple counter */
   <N> MutationResult incrementCounter(final K key, final String cf, final N columnName, final long increment);
-  
+
   /** Convenient method to decrement a simple counter */
   <N> MutationResult decrementCounter(final K key, final String cf, final N columnName, final long increment);
 
   <N> MutationResult deleteCounter(final K key, final String cf, final N columnName, final Serializer<N> nameSerializer);
-  
+
   /**
    * Deletes a subcolumn of a supercolumn for a counter
    * @param <SN> super column type
@@ -159,7 +159,7 @@ public interface Mutator<K> {
    */
   <SN, N> MutationResult subDeleteCounter(final K key, final String cf, final SN supercolumnName,
       final N columnName, final Serializer<SN> sNameSerializer, final Serializer<N> nameSerializer);
-  
+
   /**
    * Schedule an increment of a CounterColumn to be inserted in batch mode by {@link #execute()}
    */
@@ -169,7 +169,7 @@ public interface Mutator<K> {
    * Schedule an increment of a SuperColumn to be inserted in batch mode by {@link #execute()}
    */
   <SN, N> Mutator<K> addCounter(K key, String cf, HCounterSuperColumn<SN, N> sc);
-  
+
   /**
    * Adds a Deletion to the underlying batch_mutate call. The columnName argument can be null
    * in which case the whole row being deleted.
@@ -182,10 +182,10 @@ public interface Mutator<K> {
    * @return a mutator
    */
   <N> Mutator<K> addCounterDeletion(K key, String cf, N counterColumnName, Serializer<N> nameSerializer);
-  
+
   /**
    * Alternate form for easy deletion of the whole row.
-   * 
+   *
    * @param <N>
    * @param key
    * @return

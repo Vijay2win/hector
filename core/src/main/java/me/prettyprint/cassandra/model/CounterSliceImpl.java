@@ -18,7 +18,7 @@ public final class CounterSliceImpl<N> implements CounterSlice<N> {
   private final List<HCounterColumn<N>> columnsList;
 
   public CounterSliceImpl(List<CounterColumn> tColumns, Serializer<N> nameSerializer) {
-     
+
     Assert.noneNull(tColumns, nameSerializer);
     columnsMap = new HashMap<N,HCounterColumn<N>>(tColumns.size());
     List<HCounterColumn<N>> list = new ArrayList<HCounterColumn<N>>(tColumns.size());

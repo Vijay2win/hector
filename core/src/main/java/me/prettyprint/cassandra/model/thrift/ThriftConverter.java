@@ -37,7 +37,7 @@ public class ThriftConverter {
       throw new RuntimeException("Unregornized consistency level " + c);
     }
   }
-  
+
   /**
    * Converts a list of ColumnOrSuperColumn to Column
    * @param columns
@@ -50,5 +50,5 @@ public class ThriftConverter {
     }
     return list;
   }
-  
+
 }

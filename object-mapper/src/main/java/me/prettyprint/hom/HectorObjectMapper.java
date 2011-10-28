@@ -48,10 +48,10 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * As mentioned above all column names must be <code>String</code>s - doesn't
  * really make sense to have other types when mapping to object properties.
- * 
+ *
  * @param <T>
  *          Type of object mapping to cassandra row
- * 
+ *
  * @author Todd Burruss
  */
 public class HectorObjectMapper {
@@ -70,9 +70,9 @@ public class HectorObjectMapper {
   /**
    * Retrieve columns from cassandra keyspace and column family, instantiate a
    * new object of required type, and then map them to the object's properties.
-   * 
-   * @param <T> 
-   * 
+   *
+   * @param <T>
+   *
    * @param keyspace
    * @param colFamName
    * @param pkObj
@@ -183,7 +183,7 @@ public class HectorObjectMapper {
    * {@link HectorExtraProperties}. If so call
    * {@link HectorExtraProperties#addExtraProperty(String, String)}, on the
    * object.
-   * 
+   *
    * @param id
    *          ID (row key) of the object we are retrieving from Cassandra
    * @param clazz
@@ -191,7 +191,7 @@ public class HectorObjectMapper {
    * @param slice
    *          column slice from Hector of type
    *          <code>ColumnSlice<String, byte[]></code>
-   * 
+   *
    * @return instantiated object if success, null if slice is empty,
    *         RuntimeException otherwise
    */
@@ -239,7 +239,7 @@ public class HectorObjectMapper {
   /**
    * Create Set of HColumns for the given Object. The Object must be annotated
    * with {@link Column} on the desired fields.
-   * 
+   *
    * @param obj
    * @return
    */
@@ -254,7 +254,7 @@ public class HectorObjectMapper {
 
   /**
    * Creates a Map of property names as key and HColumns as value. See #
-   * 
+   *
    * @param obj
    * @return
    */

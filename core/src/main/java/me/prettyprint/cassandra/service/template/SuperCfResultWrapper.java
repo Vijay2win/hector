@@ -30,14 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides access to the current row of data during super column queries. 
- * 
+ * Provides access to the current row of data during super column queries.
+ *
  * @author zznate
  * @param <N> the super column's sub column name type
  */
 public class SuperCfResultWrapper<K,SN,N> extends AbstractResultWrapper<K,N> implements SuperCfResult<K,SN,N> {
   private static final Logger log = LoggerFactory.getLogger(SuperCfResultWrapper.class);
-  
+
   private Map<SN,Map<N,HColumn<N,ByteBuffer>>> columns = new LinkedHashMap<SN,Map<N,HColumn<N,ByteBuffer>>>();
   private Iterator<Map.Entry<ByteBuffer, List<ColumnOrSuperColumn>>> rows;
   private Map.Entry<ByteBuffer, List<ColumnOrSuperColumn>> entry;
@@ -48,36 +48,36 @@ public class SuperCfResultWrapper<K,SN,N> extends AbstractResultWrapper<K,N> imp
   private boolean hasEntries;
 
   private Serializer<SN> sNameSerializer;
-  
+
   public SuperCfResultWrapper(Serializer<K> keySerializer,
       Serializer<SN> sNameSerializer,
       Serializer<N> subSerializer,
       ExecutionResult<Map<ByteBuffer, List<ColumnOrSuperColumn>>> executionResult) {
     super(keySerializer, subSerializer, executionResult);
     this.sNameSerializer = sNameSerializer;
-    this.rows = executionResult.get().entrySet().iterator();    
+    this.rows = executionResult.get().entrySet().iterator();
     next();
     hasEntries = getSuperColumns() != null && getSuperColumns().size() > 0;
-  }    
+  }
 
   @Override
   public SuperCfResult<K, SN, N> next() {
     if ( !hasNext() ) {
       throw new NoSuchElementException("No more rows left on this HColumnFamily");
     }
-    entry = rows.next();    
+    entry = rows.next();
     log.debug("found entry {} with value {}", getKey(), entry.getValue());
     applyToRow(entry.getValue());
     return this;
   }
-  
+
   private void applyToRow(List<ColumnOrSuperColumn> cosclist) {
     superColumns = new ArrayList<SN>(cosclist.size());
     for (Iterator<ColumnOrSuperColumn> iterator = cosclist.iterator(); iterator.hasNext();) {
       ColumnOrSuperColumn cosc = iterator.next();
       SN sColName = sNameSerializer.fromByteBuffer(cosc.super_column.name);
       log.debug("cosc {}", cosc.super_column);
-       
+
       superColumns.add(sColName);
       Iterator<Column> tcolumns = cosc.getSuper_column().getColumnsIterator();
       Map<N,HColumn<N,ByteBuffer>> subColMap = new LinkedHashMap<N, HColumn<N,ByteBuffer>>();
@@ -88,23 +88,23 @@ public class SuperCfResultWrapper<K,SN,N> extends AbstractResultWrapper<K,N> imp
       columns.put(sColName, subColMap);
     }
   }
-  
-  
+
+
   public List<SN> getSuperColumns() {
     return superColumns;
   }
-  
-  
+
+
   @Override
   public ByteBuffer getColumnValue(N columnName) {
     HColumn<N,ByteBuffer> col = getColumn( columnName );
-    return col != null ? col.getValue() : null; 
+    return col != null ? col.getValue() : null;
   }
 
 
   @Override
   public K getKey() {
-    return keySerializer.fromByteBuffer(entry.getKey()); 
+    return keySerializer.fromByteBuffer(entry.getKey());
   }
 
 
@@ -127,7 +127,7 @@ public class SuperCfResultWrapper<K,SN,N> extends AbstractResultWrapper<K,N> imp
 
   @Override
   public void remove() {
-    rows.remove();    
+    rows.remove();
   }
 
   private <V> V extractType(SN sColumnName, N columnName, Serializer<V> valueSerializer) {
@@ -136,9 +136,9 @@ public class SuperCfResultWrapper<K,SN,N> extends AbstractResultWrapper<K,N> imp
       return valueSerializer.fromByteBuffer(map.get(columnName).getValue());
     return null;
   }
-  
+
   @Override
-  public Boolean getBoolean(SN sColumnName, N columnName) {    
+  public Boolean getBoolean(SN sColumnName, N columnName) {
     return extractType(sColumnName, columnName, BooleanSerializer.get());
   }
 
@@ -184,7 +184,7 @@ public class SuperCfResultWrapper<K,SN,N> extends AbstractResultWrapper<K,N> imp
     return extractType(sColumnName, columnName, ByteBufferSerializer.get());
   }
 
-  
+
   @Override
   public SN getActiveSuperColumn() {
     return currentSuperColumn;
@@ -201,7 +201,7 @@ public class SuperCfResultWrapper<K,SN,N> extends AbstractResultWrapper<K,N> imp
   public boolean hasResults() {
     return hasEntries;
   }
-  
-  
+
+
 
 }

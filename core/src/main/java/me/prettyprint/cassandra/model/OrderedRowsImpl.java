@@ -25,7 +25,7 @@ public class OrderedRowsImpl<K,N,V> extends RowsImpl<K,N,V> implements OrderedRo
     super(thriftRet, nameSerializer, valueSerializer);
     rowsList = new ArrayList<Row<K,N,V>>(rows.values());
   }
-  
+
   protected OrderedRowsImpl() {
     super();
     rowsList = new ArrayList<Row<K,N,V>>();

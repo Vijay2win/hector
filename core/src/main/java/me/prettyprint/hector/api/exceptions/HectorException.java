@@ -2,7 +2,7 @@ package me.prettyprint.hector.api.exceptions;
 
 /**
  * Base exception class for all Hector related exceptions.
- * 
+ *
  * @author Ran Tavory (rantav@gmail.com)
  *
  */
@@ -13,7 +13,7 @@ public class HectorException extends RuntimeException {
   public HectorException(String msg) {
     super(msg);
   }
-  
+
   public HectorException(Throwable t) {
     super(t);
   }

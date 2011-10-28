@@ -22,30 +22,30 @@ import me.prettyprint.hector.api.beans.HColumn;
  * contents of an object. This would likely by implemented as an anonymous inner
  * class with access to a final object in scope. It would update the given row
  * with the object's data.
- * 
+ *
  * For more complex behaviour, subclasses should implementat update() to simply make
  * consecutive calls to various set****() methods which already have the
  * contextual information they need to update the correct row.
- * 
+ *
  * The downside of this approach is that the updater is essentially stateful and
  * cannot be used concurrently. The alternative is to pass an object in to
  * update() as a parameter with the setter methods, leaving the updater to be
  * stateless.
- * 
+ *
  * @author david
  * @author zznate
- * 
+ *
  * @param <K>
  *          the key's data type
  * @param <N>
  *          the standard or super column's data type
  */
 public class ColumnFamilyUpdater<K, N> extends AbstractTemplateUpdater<K,N> {
-  
+
   public ColumnFamilyUpdater(ColumnFamilyTemplate<K, N> template, ColumnFactory columnFactory) {
     super(template, columnFactory);
   }
-  
+
   public void deleteColumn(N columnName) {
     template.getMutator().addDeletion(getCurrentKey(), template.getColumnFamily(),
         columnName, template.getTopSerializer());
@@ -74,13 +74,13 @@ public class ColumnFamilyUpdater<K, N> extends AbstractTemplateUpdater<K,N> {
         template.getTopSerializer(), IntegerSerializer.get());
     template.getMutator().addInsertion(getCurrentKey(), template.getColumnFamily(), column);
   }
-  
+
   public void setDouble(N columnName, Double value) {
     HColumn<N, Double> column = columnFactory.createColumn(columnName, value,
         template.getTopSerializer(), DoubleSerializer.get());
     template.getMutator().addInsertion(getCurrentKey(), template.getColumnFamily(), column);
-  }  
-  
+  }
+
   public void setBoolean(N columnName, Boolean value) {
     HColumn<N, Boolean> column = columnFactory.createColumn(columnName, value,
         template.getTopSerializer(), BooleanSerializer.get());
@@ -98,13 +98,13 @@ public class ColumnFamilyUpdater<K, N> extends AbstractTemplateUpdater<K,N> {
         template.getTopSerializer(), ByteBufferSerializer.get());
     template.getMutator().addInsertion(getCurrentKey(), template.getColumnFamily(), column);
   }
-  
+
   public void setDate(N columnName, Date value) {
     HColumn<N, Date> column = columnFactory.createColumn(columnName, value,
         template.getTopSerializer(), DateSerializer.get());
     template.getMutator().addInsertion(getCurrentKey(), template.getColumnFamily(), column);
   }
-  
+
   public <V> void setValue(N columnName, V value, Serializer<V> serializer) {
     HColumn<N, V> column = columnFactory.createColumn(columnName, value,
         template.getTopSerializer(), serializer);

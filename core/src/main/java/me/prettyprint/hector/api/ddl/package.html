@@ -9,16 +9,16 @@ The api.ddl package defines all Data Definition operations that hector supports 
   <li>Adding new keyspaces</li>
   <li>Adding new column families</li>
   <li>Defining indices</li>
-  <li>Deleting exisiting constructs</li> 
+  <li>Deleting exisiting constructs</li>
 </ul>
 
-A note should be taken that by server design, it is required that all DDL operations are to be 
-performed in a serialized manner.<br/> 
+A note should be taken that by server design, it is required that all DDL operations are to be
+performed in a serialized manner.<br/>
 Cassandra cannot support two DDL operations issued at the same time. The first operation needs
 to end before the next operation can take place and Hecotr does not try to protect its users from it,
-it's the responsibility of hector's users to prevent from multiple schema changes to happen at the 
+it's the responsibility of hector's users to prevent from multiple schema changes to happen at the
 same time. <br/>
-See <a href="http://wiki.apache.org/cassandra/LiveSchemaUpdates">Live Schema Updates</a> for more 
+See <a href="http://wiki.apache.org/cassandra/LiveSchemaUpdates">Live Schema Updates</a> for more
 details.<br/>
 </body>
 </html>

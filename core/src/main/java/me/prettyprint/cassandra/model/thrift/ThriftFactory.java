@@ -55,14 +55,14 @@ public class ThriftFactory {
     }
     return columnPath;
   }
-  
+
   public static CounterColumn createCounterColumn(String name, long value) {
     CounterColumn cc = new CounterColumn();
     cc.setName(StringSerializer.get().toByteBuffer(name));
     cc.setValue(value);
     return cc;
   }
-  
+
   public static <N> CounterColumn createCounterColumn(N name, long value, Serializer<N> ns) {
     CounterColumn cc = new CounterColumn();
     cc.setName(ns.toByteBuffer(name));

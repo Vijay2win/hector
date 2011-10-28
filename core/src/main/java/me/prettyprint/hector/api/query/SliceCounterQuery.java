@@ -4,7 +4,7 @@ import me.prettyprint.hector.api.beans.CounterSlice;
 
 /**
  * A query for the thrift call get_counter_slice
- * 
+ *
  * @author patricioe (Patricio Echague)
  *
  * @param <N> Name Type

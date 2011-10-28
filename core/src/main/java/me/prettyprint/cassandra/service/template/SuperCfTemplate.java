@@ -34,11 +34,11 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
   public Serializer<N> getSubSerializer() {
     return subSerializer;
   }
-  
+
   /**
    * Checks if there are any columns at a row specified by key in a super column
    * family
-   * 
+   *
    * @param key
    * @return true if columns exist
    */
@@ -49,7 +49,7 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
   /**
    * Checks if there are any columns at a row specified by key in a specific
    * super column
-   * 
+   *
    * @param key
    * @param superColumnName
    * @param subSerializer
@@ -72,7 +72,7 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
   }
 
   /**
-   * 
+   *
    * @param key
    * @param superColumnName
    * @return the number of child columns in a specified super column
@@ -85,7 +85,7 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
 
   /**
    * Counts columns in the specified range of a super column family
-   * 
+   *
    * @param key
    * @param start
    * @param end
@@ -104,7 +104,7 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
   /**
    * Counts child columns in the specified range of a children in a specified
    * super column
-   * 
+   *
    * @param <SUBCOL>
    * @param key
    * @param superColumnName
@@ -126,63 +126,63 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
   }
 
 
-  
+
   public <V> HColumn<N, V> querySingleSubColumn(K key,
       SN columnName, N subColumnName, Serializer<V> valueSerializer) {
-    
+
     SuperCfResult<K,SN,N> result = doExecuteSlice(key, columnName, activeSlicePredicate);
-    
-    if (result == null) { 
+
+    if (result == null) {
     	return null;
     }
-    
+
     HColumn<N,ByteBuffer> origCol = result.getColumn(subColumnName);
-    
+
     // TODO make this far less hacky
     if ( columnName == null || origCol == null ) {
       return null;
     }
-    
-    return new HColumnImpl<N, V>(subColumnName, 
-        valueSerializer.fromByteBuffer(origCol.getValue()), origCol.getClock(), 
+
+    return new HColumnImpl<N, V>(subColumnName,
+        valueSerializer.fromByteBuffer(origCol.getValue()), origCol.getClock(),
         subSerializer, valueSerializer);
   }
-    
+
   public SuperCfResult<K, SN, N> querySuperColumns(K key, List<SN> sColumnNames) {
     HSlicePredicate<SN> workingSlicePredicate = new HSlicePredicate<SN>(topSerializer);
     workingSlicePredicate.setColumnNames(sColumnNames);
-    return doExecuteSlice(key, null, workingSlicePredicate);    
+    return doExecuteSlice(key, null, workingSlicePredicate);
   }
-  
+
   public SuperCfResult<K, SN, N> querySuperColumns(List<K> keys, List<SN> sColumnNames) {
     HSlicePredicate<SN> workingSlicePredicate = new HSlicePredicate<SN>(topSerializer);
     workingSlicePredicate.setColumnNames(sColumnNames);
-    return doExecuteMultigetSlice(keys, workingSlicePredicate);    
+    return doExecuteMultigetSlice(keys, workingSlicePredicate);
   }
-  
-  public SuperCfResult<K, SN, N> querySuperColumns(List<K> keys) {        
-    return doExecuteMultigetSlice(keys, activeSlicePredicate);    
+
+  public SuperCfResult<K, SN, N> querySuperColumns(List<K> keys) {
+    return doExecuteMultigetSlice(keys, activeSlicePredicate);
   }
 
   public <T> T querySuperColumns(K key, List<SN> sColumnNames,
       SuperCfRowMapper<K, SN, N, T> mapper) {
-    
+
     HSlicePredicate<SN> workingSlicePredicate = new HSlicePredicate<SN>(topSerializer);
     workingSlicePredicate.setColumnNames(sColumnNames);
     return mapper.mapRow(doExecuteSlice(key, null, workingSlicePredicate));
   }
 
-  public SuperCfResult<K, SN, N> querySuperColumns(K key) {    
+  public SuperCfResult<K, SN, N> querySuperColumns(K key) {
     return doExecuteSlice(key, null, activeSlicePredicate);
   }
-  
+
   public SuperCfResult<K, SN, N> querySuperColumn(K key, SN sColumnName) {
     HSlicePredicate<SN> workingSlicePredicate = new HSlicePredicate<SN>(topSerializer);
     workingSlicePredicate.addColumnName(sColumnName);
     return doExecuteSlice(key, sColumnName, workingSlicePredicate);
   }
-  
-  public SuperCfUpdater<K, SN, N> createUpdater(K key, SN sColumnName) {    
+
+  public SuperCfUpdater<K, SN, N> createUpdater(K key, SN sColumnName) {
     return createUpdater(key).addSuperColumn(sColumnName);
   }
 
@@ -191,13 +191,13 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
     updater.addKey(key);
     return updater;
   }
-  
+
   public void update(SuperCfUpdater<K, SN, N> updater) {
     updater.updateInternal();
     updater.update();
     executeIfNotBatched();
   }
-    
+
   /**
    * Immediately delete the key and superColumn combination
    */
@@ -215,8 +215,8 @@ public abstract class SuperCfTemplate<K, SN, N> extends AbstractColumnFamilyTemp
   }
 
   protected abstract SuperCfResult<K,SN,N> doExecuteSlice(K key, SN sColumnName, HSlicePredicate<SN> predicate);
-  
+
   protected abstract SuperCfResult<K,SN,N> doExecuteMultigetSlice(List<K> keys, HSlicePredicate<SN> predicate);
-  
+
 
 }

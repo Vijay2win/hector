@@ -14,7 +14,7 @@ public abstract class BaseColumnFamilyTemplateTest extends BaseEmbededServerSetu
 
   protected Keyspace keyspace;
   static final StringSerializer se = StringSerializer.get();
-  
+
   @Before
   public void setupLocal() {
     Cluster cluster = getOrCreateCluster("MyCluster", "127.0.0.1:9170");

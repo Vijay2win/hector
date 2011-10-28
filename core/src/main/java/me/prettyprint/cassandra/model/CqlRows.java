@@ -10,16 +10,16 @@ import org.apache.cassandra.thrift.CqlResultType;
 
 /**
  * Row wrapper specific to the multi-type results capable from a CqlQuery.
- * This is a bit more convoluted than I would like, put most of this API 
+ * This is a bit more convoluted than I would like, put most of this API
  * is still moving around, so we will stick with the overloading for now.
- * 
+ *
  * @author zznate
  */
 public final class CqlRows<K, N, V> extends OrderedRowsImpl<K, N, V> {
 
   private final CqlResultType resultType;
   private int count;
-  
+
   /**
    * Constructed for {@link CqlResultType#ROWS}
    * @param thriftRet
@@ -32,7 +32,7 @@ public final class CqlRows<K, N, V> extends OrderedRowsImpl<K, N, V> {
     super(thriftRet, nameSerializer, valueSerializer);
     this.resultType = CqlResultType.ROWS;
   }
-  
+
   /**
    * Constructed with only a count for {@link CqlResultType#INT}
    * @param count
@@ -42,13 +42,13 @@ public final class CqlRows<K, N, V> extends OrderedRowsImpl<K, N, V> {
     this.resultType = CqlResultType.INT;
     this.count = count;
   }
-  
+
   /**
    * Constructed as empty for {@link CqlResultType#VOID}
    */
   public CqlRows() {
     super();
-    this.resultType = CqlResultType.VOID;    
+    this.resultType = CqlResultType.VOID;
   }
 
   /**
@@ -57,9 +57,9 @@ public final class CqlRows<K, N, V> extends OrderedRowsImpl<K, N, V> {
    * @return
    */
   public int getAsCount() {
-    if ( !resultType.equals(CqlResultType.INT)) 
+    if ( !resultType.equals(CqlResultType.INT))
       throw new IllegalArgumentException("Attempted to extract count from the wrong type of CQL query: " + resultType.toString());
     return count;
   }
-  
+
 }

@@ -107,7 +107,7 @@ public final class HCounterSuperColumnImpl<SN,N> implements HCounterSuperColumn<
   public byte[] getNameBytes() {
     return superNameSerializer.toByteBuffer(getName()).array();
   }
-  
+
   public ByteBuffer getNameByteBuffer() {
     return superNameSerializer.toByteBuffer(getName());
   }

@@ -234,5 +234,5 @@ public final class CassandraHost {
     this.useSocketKeepalive = useSocketKeepalive;
   }
 
-  
+
 }

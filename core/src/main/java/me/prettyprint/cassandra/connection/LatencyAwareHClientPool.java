@@ -9,7 +9,7 @@ import me.prettyprint.hector.api.exceptions.HectorException;
 /**
  * This class provides a queue function of latencies over CHCP, collecting all the latency information and calculates
  * the score (expensive operation).
- * 
+ *
  * @author Vijay Parthasarathy
  */
 public class LatencyAwareHClientPool extends ConcurrentHClientPool {
