@@ -144,17 +144,17 @@ public class HectorObjectMapperTest {
     assertEquals(id, obj.getId());
     assertEquals(longProp1, obj.getLongProp1());
   }
-  
+
   @Test
   public void testIsSerializable() {
     assertTrue(HectorObjectMapper.isSerializable(UUID.class));
   }
-  
+
   @Test
   public void testIsNotSerializable() {
     assertFalse(HectorObjectMapper.isSerializable(HectorObjectMapper.class));
   }
-  
+
   // --------------------
 
   @Before

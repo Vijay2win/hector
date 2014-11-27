@@ -28,11 +28,11 @@ public class IdClassParserValidator implements ParserValidator {
   @Override
   public <T> void validateAndSetDefaults(ClassCacheMgr cacheMgr, CFMappingDef<T> cfMapDef) {
     KeyDefinition keyDef = cfMapDef.getKeyDef();
-    
+
     if ( null == keyDef.getPkClazz() ) {
       return;
     }
-    
+
     Map<String, PropertyDescriptor> pdMap;
     try {
       pdMap = cacheMgr.getFieldPropertyDescriptorMap(keyDef.getPkClazz());
@@ -40,12 +40,12 @@ public class IdClassParserValidator implements ParserValidator {
       throw new HectorObjectMapperException("exception while introspecting class, "
           + keyDef.getPkClazz().getName(), e);
     }
-    
+
     if ( keyDef.getIdPropertyMap().size() != pdMap.size() ) {
       throw new HectorObjectMapperException("Each field in the primary key class, " + keyDef.getPkClazz().getName()
           + ", must have a corresponding property in the entity, " + cfMapDef.getRealClass().getName() + ", annotated with @" + Id.class.getSimpleName() );
     }
-    
+
     for ( String idFieldName : pdMap.keySet() ) {
       if ( !keyDef.getIdPropertyMap().keySet().contains(idFieldName)) {
         throw new HectorObjectMapperException("Each field in the primary key class, " + keyDef.getPkClazz().getName()

@@ -18,7 +18,9 @@ public interface ColumnFamilyDefinition {
   String getComment();
   double getRowCacheSize();
   int getRowCacheSavePeriodInSeconds();
+  int getKeyCacheSavePeriodInSeconds();
   double getKeyCacheSize();
+  String getKeyValidationClass();
   double getReadRepairChance();
   List<ColumnDefinition> getColumnMetadata();
   int getGcGraceSeconds();

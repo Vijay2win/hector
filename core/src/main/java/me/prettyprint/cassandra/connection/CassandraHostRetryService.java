@@ -31,9 +31,9 @@ public class CassandraHostRetryService extends BackgroundCassandraHostService {
     super(connectionManager, cassandraHostConfigurator);
     this.exceptionsTranslator = connectionManager.exceptionsTranslator;
     this.retryDelayInSeconds = cassandraHostConfigurator.getRetryDownedHostsDelayInSeconds();
-    downedHostQueue = new LinkedBlockingQueue<CassandraHost>(cassandraHostConfigurator.getRetryDownedHostsQueueSize() < 1 
+    downedHostQueue = new LinkedBlockingQueue<CassandraHost>(cassandraHostConfigurator.getRetryDownedHostsQueueSize() < 1
         ? Integer.MAX_VALUE : cassandraHostConfigurator.getRetryDownedHostsQueueSize());
-          
+
     sf = executor.scheduleWithFixedDelay(new RetryRunner(), this.retryDelayInSeconds,this.retryDelayInSeconds, TimeUnit.SECONDS);
 
     log.info("Downed Host Retry service started with queue size {} and retry delay {}s",
@@ -87,17 +87,16 @@ public class CassandraHostRetryService extends BackgroundCassandraHostService {
     public void run() {
       CassandraHost cassandraHost = downedHostQueue.poll();
       if ( cassandraHost == null ) {
-        if ( log.isDebugEnabled() ) { 
+        if ( log.isDebugEnabled() ) {
           log.debug("Retry service fired... nothing to do.");
         }
         return;
       }
-      
+
       boolean reconnected = verifyConnection(cassandraHost);
       log.info("Downed Host retry status {} with host: {}", reconnected, cassandraHost.getName());
       if ( reconnected ) {
-        //cassandraClientPool.getCluster().addHost(cassandraHost, true);
-        connectionManager.addCassandraHost(cassandraHost);
+        reconnected = connectionManager.addCassandraHost(cassandraHost);
       }
       if ( !reconnected && cassandraHost != null ) {
         downedHostQueue.add(cassandraHost);
@@ -112,23 +111,20 @@ public class CassandraHostRetryService extends BackgroundCassandraHostService {
       boolean found = false;
       HThriftClient client = new HThriftClient(cassandraHost);
       try {
-        
+
         client.open();
         found = client.getCassandra().describe_cluster_name() != null;
-        client.close();              
-      } catch (HectorTransportException he) {        
+        client.close();
+      } catch (HectorTransportException he) {
         log.warn("Downed {} host still appears to be down: {}", cassandraHost, he.getMessage());
       } catch (Exception ex) {
-                
+
         log.error("Downed Host retry failed attempt to verify CassandraHost", ex);
-        
-      } 
+
+      }
       return found;
     }
 
   }
 
-  // TODO create callable to handle checking
-
-  // perhaps wrap CassandraHost and add a lastRetryTime?
 }

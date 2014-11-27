@@ -12,5 +12,5 @@ import me.prettyprint.hector.api.ResultStatus;
  */
 public interface MutationResult extends ResultStatus {
 
-  
+
 }

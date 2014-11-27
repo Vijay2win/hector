@@ -19,19 +19,19 @@ public class IdClassParserValidatorTest {
     IdClassParserValidator parVal = new IdClassParserValidator();
 
     CFMappingDef<MyTestBean> cfMapDef = new CFMappingDef<MyTestBean>(MyTestBean.class);
-    
+
     IdClass anno = new IdClass() {
       @Override
       public Class<? extends Annotation> annotationType() {
         return IdClass.class;
       }
-      
+
       @Override
       public Class value() {
         return MyCompositePK.class;
       }
     };
-    
+
     parVal.parse(cacheMgr, anno, cfMapDef);
   }
 }

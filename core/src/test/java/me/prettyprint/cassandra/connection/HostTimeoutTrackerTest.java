@@ -24,7 +24,7 @@ public class HostTimeoutTrackerTest {
     HConnectionManager connectionManager = new HConnectionManager("TestCluster", cassandraHostConfigurator);
     hostTimeoutTracker = new HostTimeoutTracker(connectionManager, cassandraHostConfigurator);
   }
-    
+
   @Test
   public void testTrackHostLatency() {
     CassandraHost cassandraHost = new CassandraHost("localhost:9170");
@@ -37,11 +37,11 @@ public class HostTimeoutTrackerTest {
 
     }
     assertTrue(hostTimeoutTracker.checkTimeout(cassandraHost));
-    // ... 
-    // in HConnectionManager: 
+    // ...
+    // in HConnectionManager:
     // - if ( hostLatencyTracker.checkTimeout(cassandraHost) )
     //        markHostAsDown(cassandraHost);
     //        excludeHosts.add(cassandraHost);
-    
+
   }
 }

@@ -29,6 +29,7 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
   private double readRepairChance;
   private List<ColumnDefinition> columnMetadata;
   private int gcGraceSeconds;
+  private String keyValidationClass;
   private String defaultValidationClass;
   private int id;
   private int maxCompactionThreshold;
@@ -36,6 +37,7 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
   private double memtableOperationsInMillions;
   private int memtableThroughputInMb;
   private int memtableFlushAfterMins;
+  private int keyCacheSavePeriodInSeconds;
 
   public ThriftCfDef(CfDef d) {
     Assert.notNull(d, "CfDef is null");
@@ -48,24 +50,26 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
     rowCacheSize = d.row_cache_size;
     rowCacheSavePeriodInSeconds = d.row_cache_save_period_in_seconds;
     keyCacheSize = d.key_cache_size;
+    keyCacheSavePeriodInSeconds = d.key_cache_save_period_in_seconds;
+    keyValidationClass = d.key_validation_class;
     readRepairChance = d.read_repair_chance;
     columnMetadata = ThriftColumnDef.fromThriftList(d.column_metadata);
     gcGraceSeconds = d.gc_grace_seconds;
     defaultValidationClass = d.default_validation_class;
     id = d.id;
-    minCompactionThreshold = d.min_compaction_threshold == 0 ? 
+    minCompactionThreshold = d.min_compaction_threshold == 0 ?
         CFMetaData.DEFAULT_MIN_COMPACTION_THRESHOLD : d.min_compaction_threshold;
     maxCompactionThreshold = d.max_compaction_threshold == 0 ?
         CFMetaData.DEFAULT_MAX_COMPACTION_THRESHOLD : d.max_compaction_threshold;
-    memtableOperationsInMillions = d.memtable_operations_in_millions == 0 ? 
+    memtableOperationsInMillions = d.memtable_operations_in_millions == 0 ?
         CFMetaData.DEFAULT_MEMTABLE_OPERATIONS_IN_MILLIONS : d.memtable_operations_in_millions;
-    memtableFlushAfterMins = d.memtable_flush_after_mins == 0 ? 
+    memtableFlushAfterMins = d.memtable_flush_after_mins == 0 ?
         CFMetaData.DEFAULT_MEMTABLE_LIFETIME_IN_MINS : d.memtable_flush_after_mins;
-    memtableThroughputInMb = d.memtable_throughput_in_mb == 0 ? 
+    memtableThroughputInMb = d.memtable_throughput_in_mb == 0 ?
         CFMetaData.DEFAULT_MEMTABLE_THROUGHPUT_IN_MB : d.memtable_throughput_in_mb;
 
   }
-  
+
   public ThriftCfDef(ColumnFamilyDefinition columnFamilyDefinition) {
     keyspace = columnFamilyDefinition.getKeyspaceName();
     name = columnFamilyDefinition.getName();
@@ -76,6 +80,8 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
     rowCacheSize = columnFamilyDefinition.getRowCacheSize();
     rowCacheSavePeriodInSeconds = columnFamilyDefinition.getRowCacheSavePeriodInSeconds();
     keyCacheSize = columnFamilyDefinition.getKeyCacheSize();
+    keyCacheSavePeriodInSeconds = columnFamilyDefinition.getKeyCacheSavePeriodInSeconds();
+    keyValidationClass = columnFamilyDefinition.getKeyValidationClass();
     readRepairChance = columnFamilyDefinition.getReadRepairChance();
     columnMetadata = columnFamilyDefinition.getColumnMetadata();
     gcGraceSeconds = columnFamilyDefinition.getGcGraceSeconds();
@@ -83,13 +89,13 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
     id = columnFamilyDefinition.getId();
     minCompactionThreshold = columnFamilyDefinition.getMinCompactionThreshold() == 0 ?
         CFMetaData.DEFAULT_MIN_COMPACTION_THRESHOLD : columnFamilyDefinition.getMinCompactionThreshold();
-    maxCompactionThreshold = columnFamilyDefinition.getMaxCompactionThreshold() == 0 ? 
+    maxCompactionThreshold = columnFamilyDefinition.getMaxCompactionThreshold() == 0 ?
         CFMetaData.DEFAULT_MAX_COMPACTION_THRESHOLD : columnFamilyDefinition.getMaxCompactionThreshold();
-    memtableFlushAfterMins = columnFamilyDefinition.getMemtableFlushAfterMins() == 0 ? 
-        CFMetaData.DEFAULT_MEMTABLE_LIFETIME_IN_MINS : columnFamilyDefinition.getMemtableFlushAfterMins();     
-    memtableThroughputInMb = columnFamilyDefinition.getMemtableThroughputInMb() == 0 ? 
-        CFMetaData.DEFAULT_MEMTABLE_THROUGHPUT_IN_MB : columnFamilyDefinition.getMemtableThroughputInMb();    
-    memtableOperationsInMillions = columnFamilyDefinition.getMemtableOperationsInMillions() == 0 ? 
+    memtableFlushAfterMins = columnFamilyDefinition.getMemtableFlushAfterMins() == 0 ?
+        CFMetaData.DEFAULT_MEMTABLE_LIFETIME_IN_MINS : columnFamilyDefinition.getMemtableFlushAfterMins();
+    memtableThroughputInMb = columnFamilyDefinition.getMemtableThroughputInMb() == 0 ?
+        CFMetaData.DEFAULT_MEMTABLE_THROUGHPUT_IN_MB : columnFamilyDefinition.getMemtableThroughputInMb();
+    memtableOperationsInMillions = columnFamilyDefinition.getMemtableOperationsInMillions() == 0 ?
         CFMetaData.DEFAULT_MEMTABLE_OPERATIONS_IN_MILLIONS : columnFamilyDefinition.getMemtableOperationsInMillions();
   }
 
@@ -102,11 +108,12 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
     comparatorType = ComparatorType.BYTESTYPE;
     readRepairChance = CFMetaData.DEFAULT_READ_REPAIR_CHANCE;
     keyCacheSize = CFMetaData.DEFAULT_KEY_CACHE_SIZE;
+    keyCacheSavePeriodInSeconds = CFMetaData.DEFAULT_KEY_CACHE_SAVE_PERIOD_IN_SECONDS;
     gcGraceSeconds = CFMetaData.DEFAULT_GC_GRACE_SECONDS;
     minCompactionThreshold = CFMetaData.DEFAULT_MIN_COMPACTION_THRESHOLD;
     maxCompactionThreshold = CFMetaData.DEFAULT_MAX_COMPACTION_THRESHOLD;
-    memtableFlushAfterMins = CFMetaData.DEFAULT_MEMTABLE_LIFETIME_IN_MINS;     
-    memtableThroughputInMb = CFMetaData.DEFAULT_MEMTABLE_THROUGHPUT_IN_MB;    
+    memtableFlushAfterMins = CFMetaData.DEFAULT_MEMTABLE_LIFETIME_IN_MINS;
+    memtableThroughputInMb = CFMetaData.DEFAULT_MEMTABLE_THROUGHPUT_IN_MB;
     memtableOperationsInMillions = CFMetaData.DEFAULT_MEMTABLE_OPERATIONS_IN_MILLIONS;
   }
 
@@ -217,14 +224,16 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
     d.setGc_grace_seconds(gcGraceSeconds);
     d.setId(id);
     d.setKey_cache_size(keyCacheSize);
+    d.setKey_cache_save_period_in_seconds(keyCacheSavePeriodInSeconds);
+    d.setKey_validation_class(keyValidationClass);
     d.setMax_compaction_threshold(maxCompactionThreshold);
     d.setMin_compaction_threshold(minCompactionThreshold);
     d.setRead_repair_chance(readRepairChance);
     d.setRow_cache_size(rowCacheSize);
     d.setMemtable_operations_in_millions(memtableOperationsInMillions);
     d.setMemtable_throughput_in_mb(memtableThroughputInMb);
-    d.setMemtable_flush_after_mins(memtableFlushAfterMins);        
-    
+    d.setMemtable_flush_after_mins(memtableFlushAfterMins);
+
     if (subComparatorType != null) {
       d.setSubcomparator_type(subComparatorType.getClassName());
     }
@@ -234,6 +243,11 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
   @Override
   public String getDefaultValidationClass() {
     return defaultValidationClass;
+  }
+
+  @Override
+  public String getKeyValidationClass(){
+      return keyValidationClass;
   }
 
   @Override
@@ -295,6 +309,10 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
     this.defaultValidationClass = defaultValidationClass;
   }
 
+  public void setKeyValidationClass(String keyValidationClass){
+      this.keyValidationClass = keyValidationClass;
+  }
+
   public void setId(int id) {
     this.id = id;
   }
@@ -325,5 +343,10 @@ public class ThriftCfDef implements ColumnFamilyDefinition {
   @Override
   public int getMemtableThroughputInMb() {
     return memtableThroughputInMb;
+  }
+
+  @Override
+  public int getKeyCacheSavePeriodInSeconds() {
+    return keyCacheSavePeriodInSeconds;
   }
 }

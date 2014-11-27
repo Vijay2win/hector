@@ -4,9 +4,9 @@ import java.nio.ByteBuffer;
 
 /**
  * Converts bytes to Boolean and vice versa
- * 
+ *
  * @author Bozhidar Bozhanov
- * 
+ *
  */
 public final class BooleanSerializer extends AbstractSerializer<Boolean> {
 

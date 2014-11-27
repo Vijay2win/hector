@@ -5,9 +5,11 @@ import static me.prettyprint.cassandra.utils.Assert.notNull;
 
 import java.nio.ByteBuffer;
 
+import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.hector.api.Serializer;
 
 import org.apache.cassandra.thrift.ColumnPath;
+import org.apache.cassandra.thrift.CounterColumn;
 
 /**
  * Utility factory class for creating thrift objects.
@@ -18,7 +20,7 @@ import org.apache.cassandra.thrift.ColumnPath;
 public class ThriftFactory {
 
   // probably should be typed for thrift vs. avro
-  /*package*/ static <N> ColumnPath createColumnPath(String columnFamilyName, N columnName,
+  public static <N> ColumnPath createColumnPath(String columnFamilyName, N columnName,
       Serializer<N> nameSerializer) {
     return createColumnPath(columnFamilyName, nameSerializer.toByteBuffer(columnName));
   }
@@ -44,7 +46,7 @@ public class ThriftFactory {
     return columnPath;
   }
 
-  /*package*/ static <SN> ColumnPath createSuperColumnPath(String columnFamilyName,
+  public static <SN> ColumnPath createSuperColumnPath(String columnFamilyName,
       SN superColumnName, Serializer<SN> superNameSerializer) {
     noneNull(columnFamilyName, superNameSerializer);
     ColumnPath columnPath = createColumnPath(columnFamilyName, null);
@@ -52,6 +54,20 @@ public class ThriftFactory {
       columnPath.setSuper_column(superNameSerializer.toByteBuffer(superColumnName));
     }
     return columnPath;
+  }
+
+  public static CounterColumn createCounterColumn(String name, long value) {
+    CounterColumn cc = new CounterColumn();
+    cc.setName(StringSerializer.get().toByteBuffer(name));
+    cc.setValue(value);
+    return cc;
+  }
+
+  public static <N> CounterColumn createCounterColumn(N name, long value, Serializer<N> ns) {
+    CounterColumn cc = new CounterColumn();
+    cc.setName(ns.toByteBuffer(name));
+    cc.setValue(value);
+    return cc;
   }
 
 }

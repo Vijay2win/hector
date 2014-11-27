@@ -7,7 +7,7 @@ import me.prettyprint.hom.Colors;
 public class ColorEmbedded implements Serializable {
 
   private Colors color;
-  
+
   public Colors getColor() {
     return color;
   }
@@ -15,5 +15,5 @@ public class ColorEmbedded implements Serializable {
   public void setColor(Colors color) {
     this.color = color;
   }
-  
+
 }

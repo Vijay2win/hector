@@ -11,7 +11,7 @@ import org.junit.Test;
 public class LongSerializerTest {
 
   static LongSerializer ext = LongSerializer.get();
-  
+
   @Test
   public void testConversions() {
     test(0l);
@@ -30,9 +30,9 @@ public class LongSerializerTest {
     assertEquals(new Long(Long.MIN_VALUE), ext.fromByteBuffer(ByteBufferUtil.bytes(Long.MIN_VALUE)));
     assertEquals(new Long(Long.MAX_VALUE), ext.fromByteBuffer(ByteBufferUtil.bytes(Long.MAX_VALUE)));
   }
-  
+
   private void test(Long number) {
-    
+
     assertEquals(number, ext.fromByteBuffer(ext.toByteBuffer(number)));
 
     // test compatibility with ByteBuffer default byte order

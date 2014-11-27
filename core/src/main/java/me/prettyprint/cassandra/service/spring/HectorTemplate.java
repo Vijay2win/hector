@@ -117,7 +117,7 @@ public interface HectorTemplate {
    * Creates a column with the clock of now.
    */
   <N, V> HColumn<N, V> createColumn(N name, V value);
-  
+
   /**
    * Creates a column with the specified <code>name/value</code> and <code>clock</code>.
    */

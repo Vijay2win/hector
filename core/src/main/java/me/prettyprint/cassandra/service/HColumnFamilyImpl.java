@@ -43,7 +43,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
 
   private final Logger queryLogger = LoggerFactory.getLogger("HColumnFamilyLogger");
   private final Logger log = LoggerFactory.getLogger(HColumnFamily.class);
-  
+
   private final ExecutingKeyspace keyspace;
   private final String columnFamilyName;
   private List<K> _keys;
@@ -62,7 +62,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
   private Map<ByteBuffer, List<ColumnOrSuperColumn>> rows;
   private CassandraHost lastHostUsed;
   private long lastExecutionTime;
-  
+
 
   public HColumnFamilyImpl(Keyspace keyspace, String columnFamilyName, Serializer<K> keySerializer, Serializer<N> columnNameSerializer) {
     this.keyspace = (ExecutingKeyspace)keyspace;
@@ -75,7 +75,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
     exceptionsTranslator = new ExceptionsTranslatorImpl();
     this.consistencyLevelPolicy = new ConfigurableConsistencyLevel();
   }
-  
+
   @Override
   public HColumnFamily<K, N> addKey(K key) {
     _keys.add(key);
@@ -86,9 +86,9 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
   public HColumnFamily<K, N> addKeys(Collection<K> keys) {
     _keys.addAll(keys);
     return this;
-  }  
-  
-  
+  }
+
+
 
   @Override
   public HColumnFamily<K, N> removeKeys() {
@@ -118,7 +118,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
   public HColumnFamily<K, N> setStart(N name) {
     activeSlicePredicate.setStartOn(name);
     return this;
-  }   
+  }
 
   @Override
   public HColumnFamily<K, N> addColumnName(N columnName) {
@@ -141,16 +141,16 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
   @Override
   public Collection<HColumn<N, ByteBuffer>> getColumns() {
     if ( columns == null )
-      columns = new HashMap<N, HColumn<N,ByteBuffer>>();      
-    
+      columns = new HashMap<N, HColumn<N,ByteBuffer>>();
+
     if ( !hasValues )
       doExecuteSlice();
-    
+
     return columns.values();
   }
 
-  
-  
+
+
   @Override
   public HColumnFamily<K, N> clear() {
     for (HColumn<N,ByteBuffer> col : columns.values() ) {
@@ -172,7 +172,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
   }
 
   @Override
-  public int getInt(N name) {    
+  public int getInt(N name) {
     return extractColumnValue(name, IntegerSerializer.get());
   }
 
@@ -182,7 +182,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
   }
 
   @Override
-  public String getString(N name) {    
+  public String getString(N name) {
     return extractColumnValue(name, StringSerializer.get());
   }
 
@@ -201,7 +201,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
     applyToRow(key, rows.get(keySerializer.toByteBuffer(key)));
     return this;
   }
-  
+
   @Override
   public boolean hasNext() {
     return rowIndex < rows.size() - 1 ;
@@ -217,7 +217,7 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
    * Extract a value for the specified name and serializer
    */
   @Override
-  public <V> V getValue(N name, Serializer<V> valueSerializer) {    
+  public <V> V getValue(N name, Serializer<V> valueSerializer) {
     return extractColumnValue(name, valueSerializer);
   }
 
@@ -233,11 +233,11 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
     return this;
   }
 
-  
-  
+
+
   @Override
-  public long getExecutionTimeMicro() {  
-    return lastExecutionTime;
+  public long getExecutionTimeMicro() {
+    return lastExecutionTime / 1000;
   }
 
   @Override
@@ -246,10 +246,10 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
   }
 
   private <V> V extractColumnValue(N columnName, Serializer<V> valueSerializer) {
-    maybeExecuteSlice(columnName);        
-    return columns.get(columnName) != null && columns.get(columnName).getValue() != null ? valueSerializer.fromByteBuffer(columns.get(columnName).getValue()) : null;    
+    maybeExecuteSlice(columnName);
+    return columns.get(columnName) != null && columns.get(columnName).getValue() != null ? valueSerializer.fromByteBuffer(columns.get(columnName).getValue()) : null;
   }
-  
+
   private void maybeExecuteSlice(N columnName) {
     if ( columnNames == null ) {
       columnNames = new HashSet<N>();
@@ -264,48 +264,48 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
         doExecuteSlice();
       } else {
         doExecuteMultigetSlice();
-      }      
-    }    
+      }
+    }
   }
-  
-  
+
+
   private void applyToRow(K key, List<ColumnOrSuperColumn> cosclist) {
     HColumn<N, ByteBuffer> column;
     N colName;
     for (Iterator<ColumnOrSuperColumn> iterator = cosclist.iterator(); iterator.hasNext();) {
-      ColumnOrSuperColumn cosc = iterator.next();            
+      ColumnOrSuperColumn cosc = iterator.next();
 
       colName = columnNameSerializer.fromByteBuffer(cosc.getColumn().name.duplicate());
       column = columns.get(colName);
-      
+
       if ( column == null ) {
         column = new HColumnImpl<N, ByteBuffer>(cosc.getColumn(), columnNameSerializer, ByteBufferSerializer.get());
       } else {
         ((HColumnImpl<N, ByteBuffer>)column).apply(cosc.getColumn());
       }
-      columns.put(colName, column); 
+      columns.put(colName, column);
       iterator.remove();
     }
   }
-  
+
   private void applyResultStatus(long execTime, CassandraHost cassandraHost) {
     lastExecutionTime = execTime;
     lastHostUsed = cassandraHost;
   }
-  
+
   private void doExecuteSlice() {
     keyspace.doExecuteOperation(new Operation<Column>(OperationType.READ) {
       @Override
       public Column execute(Cassandra.Client cassandra) throws HectorException {
-        
-        try {          
+
+        try {
           if ( queryLogger.isDebugEnabled() ) {
             queryLogger.debug("---------\nColumnFamily: {} slicePredicate: {}", columnFamilyName, activeSlicePredicate.toString());
           }
 
           K key = _keys.iterator().next();
           List<ColumnOrSuperColumn> cosclist = cassandra.get_slice(keySerializer.toByteBuffer(key), columnParent,
-            activeSlicePredicate.toThrift(), 
+            activeSlicePredicate.toThrift(),
             ThriftConverter.consistencyLevel(consistencyLevelPolicy.get(operationType)));
           applyResultStatus(execTime, getCassandraHost());
           applyToRow(key, cosclist);
@@ -321,22 +321,22 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
       }
     });
   }
-  
+
 
   private void doExecuteMultigetSlice() {
     keyspace.doExecuteOperation(new Operation<Column>(OperationType.READ) {
       @Override
       public Column execute(Cassandra.Client cassandra) throws HectorException {
-        try {          
+        try {
           if ( queryLogger.isDebugEnabled() ) {
             queryLogger.debug("---------\nColumnFamily multiget: {} slicePredicate: {}", columnFamilyName, activeSlicePredicate.toString());
           }
 
-          rows = cassandra.multiget_slice(keySerializer.toBytesList(_keys), columnParent, activeSlicePredicate.toThrift(), 
+          rows = cassandra.multiget_slice(keySerializer.toBytesList(_keys), columnParent, activeSlicePredicate.toThrift(),
               ThriftConverter.consistencyLevel(consistencyLevelPolicy.get(operationType)));
 
           applyResultStatus(execTime, getCassandraHost());
-          
+
           if ( queryLogger.isDebugEnabled() ) {
             queryLogger.debug("Execution took {} microseconds on host {}\n----------", lastExecutionTime, lastHostUsed);
           }
@@ -349,6 +349,11 @@ public class HColumnFamilyImpl<K,N> implements HColumnFamily<K, N> {
       }
     });
     applyToRow(_keys.get(0), rows.get(keySerializer.toByteBuffer(_keys.get(0))));
+  }
+
+  @Override
+  public long getExecutionTimeNano() {
+    return lastExecutionTime;
   }
 
 }

@@ -7,12 +7,12 @@ import java.util.List;
 /**
  * Keys in Cassandra cannot inherently be multi-field, so a strategy must be
  * employed to concatenate fields together.
- * 
+ *
  * <p/>
  * This strategy uses a delimiter to segment the fields. By default the
  * delimiter is 2 pipes, ||, but can be overriden by calling
  * {@link #setDelimiter(byte[])}.
- * 
+ *
  * @author B. Todd Burruss
  */
 public class KeyConcatenationDelimiterStrategyImpl implements KeyConcatenationStrategy {
@@ -54,7 +54,7 @@ public class KeyConcatenationDelimiterStrategyImpl implements KeyConcatenationSt
           break;
         }
       }
-      
+
       if (delimiterFound) {
         int segSize = bb.position() - segStart-delimiter.length;
         segmentList.add(copyFromMark(bb, segStart, segSize));
@@ -63,8 +63,8 @@ public class KeyConcatenationDelimiterStrategyImpl implements KeyConcatenationSt
         bb.mark();
       }
     }
-    
-    
+
+
     segmentList.add(copyFromMark(bb, segStart, bb.capacity()-segStart));
 
     return segmentList;

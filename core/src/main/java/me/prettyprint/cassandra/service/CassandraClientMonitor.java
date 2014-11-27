@@ -110,7 +110,9 @@ public class CassandraClientMonitor implements CassandraClientMonitorMBean {
   @Override
   public Set<String> getExhaustedPoolNames() {
     Set<String> ret = new HashSet<String>();
-
+    for ( CassandraHost host : connectionManager.getDownedHosts() ) {
+      ret.add(host.toString());
+    }
     return ret;
   }
 
@@ -201,12 +203,12 @@ public class CassandraClientMonitor implements CassandraClientMonitorMBean {
   }
 
   @Override
-  public boolean addCassandraHost(String hostStr) {    
+  public boolean addCassandraHost(String hostStr) {
     return connectionManager.addCassandraHost(new CassandraHost(hostStr));
   }
 
   @Override
-  public boolean removeCassandraHost(String hostStr) {  
+  public boolean removeCassandraHost(String hostStr) {
     return connectionManager.removeCassandraHost(new CassandraHost(hostStr));
   }
 
@@ -215,13 +217,13 @@ public class CassandraClientMonitor implements CassandraClientMonitorMBean {
     Set<CassandraHost> hosts = connectionManager.getSuspendedCassandraHosts();
     Set<String> hostsStr = new HashSet<String>();
     for (CassandraHost host : hosts) {
-        hostsStr.add(host.getName());    
+        hostsStr.add(host.getName());
     }
     return hostsStr;
   }
 
   @Override
-  public boolean suspendCassandraHost(String hostStr) {    
+  public boolean suspendCassandraHost(String hostStr) {
     return connectionManager.suspendCassandraHost(new CassandraHost(hostStr));
   }
 
@@ -229,9 +231,9 @@ public class CassandraClientMonitor implements CassandraClientMonitorMBean {
   public boolean unsuspendCassandraHost(String hostStr) {
     return connectionManager.unsuspendCassandraHost(new CassandraHost(hostStr));
   }
-  
-  
-  
-  
+
+
+
+
 
 }

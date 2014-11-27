@@ -8,7 +8,7 @@ import me.prettyprint.hom.annotations.Column;
 /**
  * Default converter used when none specified in {@link Column} annotation. Uses
  * Java reflection to determine the Java type to use.
- * 
+ *
  * @author Todd Burruss
  */
 public class DefaultConverter implements Converter<Object> {

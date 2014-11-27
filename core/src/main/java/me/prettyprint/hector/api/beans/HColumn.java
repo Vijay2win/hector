@@ -1,5 +1,7 @@
 package me.prettyprint.hector.api.beans;
 
+import java.nio.ByteBuffer;
+
 import me.prettyprint.hector.api.Serializer;
 
 /**
@@ -9,7 +11,7 @@ import me.prettyprint.hector.api.Serializer;
  * @param <V> The type of the column value
  *
  * @author Ran Tavory (rantav@gmail.com)
- *
+ * @author zznate
  */
 public interface HColumn<N, V> {
 
@@ -21,6 +23,16 @@ public interface HColumn<N, V> {
 
   V getValue();
 
+  /**
+   * (Advanced) Returns the underlying ByteBuffer for the value via ByteBuffer.duplicate().
+   */
+  ByteBuffer getValueBytes();
+
+  /**
+   * (Advanced) Returns the underlying ByteBuffer for the name via ByteBuffer.duplicate().
+   */
+  ByteBuffer getNameBytes();
+
   long getClock();
 
   HColumn<N,V> setClock(long clock);
@@ -28,9 +40,9 @@ public interface HColumn<N, V> {
   int getTtl();
 
   HColumn<N,V> setTtl(int ttl);
-  
+
   HColumn<N,V> clear();
-  
+
   HColumn<N,V> apply(V value, long clock, int ttl);
 
   Serializer<N> getNameSerializer();

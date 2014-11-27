@@ -42,6 +42,8 @@ public interface Cluster {
 
   String describeThriftVersion() throws HectorException;
 
+  Map<String, List<String>> describeSchemaVersions() throws HectorException;
+
   KeyspaceDefinition describeKeyspace(final String keyspace) throws HectorException;
 
   List<KeyspaceDefinition> describeKeyspaces() throws HectorException;
@@ -63,11 +65,11 @@ public interface Cluster {
 
   String dropColumnFamily(final String keyspaceName, final String columnFamily)
       throws HectorException;
-  
+
   String updateColumnFamily(final ColumnFamilyDefinition cfdef) throws HectorException;
 
   String addKeyspace(final KeyspaceDefinition ksdef) throws HectorException;
-  
+
   void truncate(final String keyspaceName, final String columnFamily) throws HectorException;
 
   Map<String, String> getCredentials();

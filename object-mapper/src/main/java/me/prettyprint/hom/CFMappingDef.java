@@ -19,10 +19,10 @@ import org.apache.commons.collections.collection.CompositeCollection;
 /**
  * Holder for the mapping between a Class annotated with {@link Entity} and the
  * Cassandra column family name.
- * 
+ *
  * @author Todd Burruss
- * 
- * @param <T> 
+ *
+ * @param <T>
  */
 public class CFMappingDef<T> {
   private Class<T> realClass;
@@ -54,7 +54,7 @@ public class CFMappingDef<T> {
   /**
    * Setup mapping with defaults for the given class. Does not parse all
    * annotations.
-   * 
+   *
    * @param realClass
    */
   public void setDefaults(Class<T> realClass) {
@@ -107,7 +107,7 @@ public class CFMappingDef<T> {
   public String getColFamName() {
     return colFamName;
   }
-  
+
   public String getEffectiveColFamName() {
     if ( null != colFamName ) {
       return colFamName;

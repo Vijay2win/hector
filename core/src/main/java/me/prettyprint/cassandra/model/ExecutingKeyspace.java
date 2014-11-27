@@ -17,7 +17,7 @@ import me.prettyprint.hector.api.exceptions.HectorException;
 
 /**
  * Thread Safe
- * 
+ *
  * @author Ran Tavory
  * @author zznate
  */
@@ -59,8 +59,8 @@ public class ExecutingKeyspace implements Keyspace {
   public void setConsistencyLevelPolicy(ConsistencyLevelPolicy cp) {
     // TODO remove this method
     consistencyLevelPolicy = cp;
-  }  
-  
+  }
+
   @Override
   public String getKeyspaceName() {
     return keyspace;

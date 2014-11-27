@@ -10,7 +10,7 @@ import me.prettyprint.hom.ClassCacheMgr;
 
 /**
  * Parse, validate, and set defaults if needed for Inheritance functionality.
- * 
+ *
  * @author bburruss
  */
 public class TableParserValidator implements ParserValidator {

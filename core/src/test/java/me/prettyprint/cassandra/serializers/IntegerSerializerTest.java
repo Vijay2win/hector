@@ -9,14 +9,14 @@ import org.apache.cassandra.utils.FBUtilities;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author Bozhidar Bozhanov
- * 
+ *
  */
 public class IntegerSerializerTest {
 
   static IntegerSerializer ext = IntegerSerializer.get();
-  
+
   @Test
   public void testConversions() {
     test(0);
@@ -35,7 +35,7 @@ public class IntegerSerializerTest {
     assertEquals(new Integer(Integer.MAX_VALUE), ext.fromByteBuffer(ByteBufferUtil.bytes(Integer.MAX_VALUE)));
     assertEquals(new Integer(Integer.MIN_VALUE), ext.fromByteBuffer(ByteBufferUtil.bytes(Integer.MIN_VALUE)));
   }
-  
+
   @Test
   public void testFromCassandraAsBytes() {
     assertEquals(new Integer(1), ext.fromBytes(ByteBufferUtil.bytes(1).array()));
@@ -44,10 +44,10 @@ public class IntegerSerializerTest {
     assertEquals(new Integer(Integer.MAX_VALUE), ext.fromBytes(ByteBufferUtil.bytes(Integer.MAX_VALUE).array()));
     assertEquals(new Integer(Integer.MIN_VALUE), ext.fromBytes(ByteBufferUtil.bytes(Integer.MIN_VALUE).array()));
   }
-  
-  
+
+
   private void test(Integer number) {
-    
+
     assertEquals(number, ext.fromByteBuffer(ext.toByteBuffer(number)));
 
     // test compatibility with ByteBuffer default byte order

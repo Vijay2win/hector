@@ -11,9 +11,9 @@ import me.prettyprint.hector.api.Serializer;
 
 /**
  * Unit test for {@link JaxbSerializer}.
- * 
+ *
  * @author shuzhang0@gmail.com
- * 
+ *
  */
 public class JaxbSerializerTest extends SerializerBaseTest<Object> {
 

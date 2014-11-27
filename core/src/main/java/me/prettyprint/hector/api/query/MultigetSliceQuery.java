@@ -12,7 +12,7 @@ import me.prettyprint.hector.api.beans.Rows;
 public interface MultigetSliceQuery<K, N, V> extends Query<Rows<K, N, V>> {
 
   MultigetSliceQuery<K, N, V> setKeys(K... keys);
-  
+
   MultigetSliceQuery<K, N, V> setKeys(Iterable<K> keys);
 
   /**

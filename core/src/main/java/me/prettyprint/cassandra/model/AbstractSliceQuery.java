@@ -50,7 +50,7 @@ public abstract class AbstractSliceQuery<K,N,V,T> extends AbstractQuery<K,N,V,T>
     }
     return this;
   }
-  
+
   /**
    * Wraps the underlying call to {@link HSlicePredicate#setKeysOnlyPredicate()}
    * Use this for a substantial performance increase when you only need the keys returned

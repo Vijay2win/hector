@@ -272,13 +272,13 @@ public abstract class AbstractCluster implements Cluster {
           throw xtrans.translate(e);
         }
         return null;
-      }      
+      }
     };
     connectionManager.operateWithFailover(op);
   }
-  
-  
 
-    
+
+
+
 
 }

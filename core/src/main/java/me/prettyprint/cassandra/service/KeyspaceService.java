@@ -11,6 +11,7 @@ import me.prettyprint.hector.api.exceptions.HectorException;
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
+import org.apache.cassandra.thrift.CounterColumn;
 import org.apache.cassandra.thrift.IndexClause;
 import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.Mutation;
@@ -46,6 +47,18 @@ public interface KeyspaceService {
   Column getColumn(ByteBuffer key, ColumnPath columnPath) throws HectorException;
 
   Column getColumn(String key, ColumnPath columnPath) throws HectorException;
+
+  /**
+   * Get the Counter  at the given columnPath.
+   *
+   * If no value is present, NotFoundException is thrown.
+   *
+   * @throws HNotFoundException
+   *           if no value exists for the counter
+   */
+  CounterColumn getCounter(ByteBuffer key, ColumnPath columnPath) throws HectorException;
+
+  CounterColumn getCounter(String key, ColumnPath columnPath) throws HectorException;
 
   /**
    * Get the SuperColumn at the given columnPath.
@@ -91,7 +104,21 @@ public interface KeyspaceService {
       throws HectorException;
 
   List<Column> getSlice(String key, ColumnParent columnParent, SlicePredicate predicate)
-  throws HectorException;
+      throws HectorException;
+
+  /**
+   * Get the group of counter columns contained by columnParent.
+   *
+   * Returns Either a ColumnFamily name or a ColumnFamily/SuperColumn specified
+   * by the given predicate. If no matching values are found, an empty list is
+   * returned.
+   */
+  List<CounterColumn> getCounterSlice(ByteBuffer key, ColumnParent columnParent, SlicePredicate predicate)
+      throws HectorException;
+
+  public List<CounterColumn> getCounterSlice(String key, ColumnParent columnParent, SlicePredicate predicate)
+      throws HectorException;
+
 
   /**
    * Get the group of superColumn contained by columnParent.
@@ -148,6 +175,16 @@ public interface KeyspaceService {
   void insert(String key, ColumnPath columnPath, ByteBuffer value, long timestamp) throws HectorException;
 
   /**
+   * Add a counter with CL.ONE
+   */
+  void addCounter(ByteBuffer key, ColumnParent columnParent, CounterColumn counterColumn) throws HectorException;
+
+  /**
+   * Add a counter with CL.ONE
+   */
+  void addCounter(String key, ColumnParent columnParent, CounterColumn counterColumn) throws HectorException;
+
+  /**
    * Call batch mutate with the assembled mutationMap. This method is a direct pass-through
    * to the underlying Thrift API
    */
@@ -169,6 +206,10 @@ public interface KeyspaceService {
   void remove(String key, ColumnPath columnPath) throws HectorException;
 
   void remove(String key, ColumnPath columnPath, long timestamp) throws HectorException;
+
+  void removeCounter(ByteBuffer key, ColumnPath columnPath) throws HectorException;
+
+  void removeCounter(String key, ColumnPath columnPath) throws HectorException;
 
 
   /**

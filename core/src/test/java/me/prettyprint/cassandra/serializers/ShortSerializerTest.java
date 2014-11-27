@@ -7,9 +7,9 @@ import me.prettyprint.hector.api.Serializer;
 
 /**
  * Unit tests for {@link ShortSerializer}.
- * 
+ *
  * @author shuzhang0@gmail.com
- * 
+ *
  */
 public class ShortSerializerTest extends SerializerBaseTest<Short> {
 

@@ -100,8 +100,8 @@ public final class ThriftRangeSlicesQuery<K, N,V> extends AbstractSliceQuery<K, 
     return this;
   }
 
-  
-  
-  
+
+
+
 
 }

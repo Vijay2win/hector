@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 /**
  * {@link Serializer} for {@link Short}s (no pun intended).
- * 
+ *
  */
 public final class ShortSerializer extends AbstractSerializer<Short> {
 

@@ -13,7 +13,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 /**
  * Scan for classes annotated with an annotation. The scan starts in the given
  * package root so it doesn't need to scan through the entire package structure.
- * 
+ *
  * @author Todd Burruss
  */
 public class AnnotationScanner {

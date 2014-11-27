@@ -86,9 +86,9 @@ public class EntityManagerTest extends CassandraTestBase {
     entity1.setStrProp2("str-prop-two");
 
     em.persist(entity1);
-    
+
     MyComplexEntity entity2 = em.find(MyComplexEntity.class, pkKey);
-    
+
     assertEquals( entity1.getIntProp1(), entity2.getIntProp1() );
     assertEquals( entity1.getStrProp1(), entity2.getStrProp1() );
     assertEquals( entity1.getStrProp2(), entity2.getStrProp2() );
@@ -106,9 +106,9 @@ public class EntityManagerTest extends CassandraTestBase {
     entity1.setStrProp2("str-prop-two");
 
     em.persist(entity1);
-    
+
     MyComplexEntity entity2 = em.find(MyComplexEntity.class, pkKey);
-    
+
     assertEquals( entity1.getIntProp1(), entity2.getIntProp1() );
     assertEquals( entity1.getStrProp1(), entity2.getStrProp1() );
     assertEquals( entity1.getStrProp2(), entity2.getStrProp2() );

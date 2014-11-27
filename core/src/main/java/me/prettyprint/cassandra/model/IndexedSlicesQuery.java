@@ -23,7 +23,7 @@ import org.apache.cassandra.thrift.IndexOperator;
  * Uses new secondary indexes. Your CF must be configured for such to use this.
  * The following creates an Indexed CF with the "birthday" column indexed (where
  * birthdate represents a timestamp as it is validated by the LongType):
- * 
+ *
  * <pre>
  *         - name: Indexed1
  *           column_metadata:
@@ -31,7 +31,7 @@ import org.apache.cassandra.thrift.IndexOperator;
  *               validator_class: LongType
  *               index_type: KEYS
  * </pre>
- * 
+ *
  * @author zznate (nate@riptano.com)
  */
 public class IndexedSlicesQuery<K, N, V> extends

@@ -53,7 +53,7 @@ public class IndexedSlicesQueryTest extends BaseEmbededServerSetupTest {
   }
 
   @Test
-  public void testInsertGetRemove() {        
+  public void testInsertGetRemove() {
 
     IndexedSlicesQuery<String, String, Long> indexedSlicesQuery = new IndexedSlicesQuery<String, String, Long>(keyspace, se, se, le);
     indexedSlicesQuery.addEqualsExpression("birthyear", 1975L);
@@ -66,11 +66,11 @@ public class IndexedSlicesQueryTest extends BaseEmbededServerSetupTest {
 
 
   }
-  
-  @Test
-  public void testMultiClause() {        
 
-    QueryResult<OrderedRows<String, String, Long>> result = 
+  @Test
+  public void testMultiClause() {
+
+    QueryResult<OrderedRows<String, String, Long>> result =
       new IndexedSlicesQuery<String, String, Long>(keyspace, se, se, le)
     .addEqualsExpression("birthyear", 1975L)
     .addGteExpression("birthmonth", 4L)
@@ -85,12 +85,12 @@ public class IndexedSlicesQueryTest extends BaseEmbededServerSetupTest {
   }
 
   @Test
-  public void testEqClauseMiss() {        
-    QueryResult<OrderedRows<String, String, Long>> result = 
+  public void testEqClauseMiss() {
+    QueryResult<OrderedRows<String, String, Long>> result =
       new IndexedSlicesQuery<String, String, Long>(keyspace, se, se, le)
     .addEqualsExpression("birthyear", 5L)
     .addGteExpression("birthmonth", 4L)
-    .addLteExpression("birthmonth", 6L)    
+    .addLteExpression("birthmonth", 6L)
     .setColumnNames("birthyear")
     .setColumnFamily(cf)
     .setStartKey("")
@@ -100,7 +100,7 @@ public class IndexedSlicesQueryTest extends BaseEmbededServerSetupTest {
 
   @Test
   public void testRowCountLimit() {
-    QueryResult<OrderedRows<String, String, Long>> result = 
+    QueryResult<OrderedRows<String, String, Long>> result =
       new IndexedSlicesQuery<String, String, Long>(keyspace, se, se, le)
     .addEqualsExpression("birthyear", 1975L)
     .addGteExpression("birthmonth", 4L)
@@ -112,5 +112,5 @@ public class IndexedSlicesQueryTest extends BaseEmbededServerSetupTest {
     .execute();
     assertEquals(2, result.get().getList().size());
   }
-  
+
 }

@@ -1,5 +1,7 @@
 package me.prettyprint.cassandra.connection;
 
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import me.prettyprint.cassandra.service.CassandraHost;
@@ -57,18 +59,18 @@ public class HThriftClient {
   }
 
   public Cassandra.Client getCassandra(String keyspaceNameArg) {
-    getCassandra();    
+    getCassandra();
     if ( keyspaceNameArg != null && !StringUtils.equals(keyspaceName, keyspaceNameArg)) {
       if ( log.isDebugEnabled() )
         log.debug("keyspace reseting from {} to {}", keyspaceName, keyspaceNameArg);
       keyspaceName = keyspaceNameArg;
       try {
-        cassandraClient.set_keyspace(keyspaceName);        
+        cassandraClient.set_keyspace(keyspaceName);
       } catch (InvalidRequestException ire) {
         throw new HInvalidRequestException(ire);
       } catch (TException e) {
         throw new HectorTransportException(e);
-      } 
+      }
 
     }
     return cassandraClient;
@@ -103,11 +105,20 @@ public class HThriftClient {
       log.debug("Creating a new thrift connection to {}", cassandraHost);
     }
 
-    if (cassandraHost.getUseThriftFramedTransport()) {
-      transport = new TFramedTransport(new TSocket(cassandraHost.getHost(), cassandraHost.getPort(), timeout));
-    } else {
-      transport = new TSocket(cassandraHost.getHost(), cassandraHost.getPort(), timeout);
+    TSocket socket = new TSocket(cassandraHost.getHost(), cassandraHost.getPort(), timeout);
+    if ( cassandraHost.getUseSocketKeepalive() ) {
+      try {
+        socket.getSocket().setKeepAlive(true);
+      } catch (SocketException se) {
+        throw new HectorTransportException("Could not set SO_KEEPALIVE on socket: ", se);
+      }
     }
+    if (cassandraHost.getUseThriftFramedTransport()) {
+      transport = new TFramedTransport(socket);
+    } else {
+      transport = socket;
+    }
+
     try {
       transport.open();
     } catch (TTransportException e) {
@@ -161,7 +172,7 @@ public class HThriftClient {
   public void startToUse() {
       useageStartTime = System.currentTimeMillis();
   }
-  
+
   /**
    * @return Time in MS since it was used.
    */

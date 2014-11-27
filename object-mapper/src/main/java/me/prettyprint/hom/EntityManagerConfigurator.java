@@ -9,7 +9,7 @@ import me.prettyprint.cassandra.service.CassandraHostConfigurator;
 /**
  * Config wrapper around the properties map required in the JPA
  * specification
- * 
+ *
  * @author zznate
  *
  */
@@ -20,30 +20,30 @@ public class EntityManagerConfigurator {
   public static final String CLUSTER_NAME_PROP = PROP_PREFIX + "clusterName";
   public static final String KEYSPACE_PROP = PROP_PREFIX + "keyspace";
   public static final String HOST_LIST_PROP = PROP_PREFIX + "hostList";
-  
+
   private final String classpathPrefix;
   private final String clusterName;
   private final String keyspace;
   private CassandraHostConfigurator cassandraHostConfigurator;
-  
-  
+
+
   /**
    * Construct an EntityManagerConfigurator to extract the propeties related
    * to entity management
    * @param properties
    */
   public EntityManagerConfigurator(Map<String, Object> properties) {
-    this(properties, null);        
+    this(properties, null);
   }
-  
+
   /**
-   * Same as single argument version, but allows for (nullable) 
+   * Same as single argument version, but allows for (nullable)
    * {@link CassandraHostConfigurator} to be provided explicitly
-   * 
+   *
    * @param properties
    * @param cassandraHostConfigurator
    */
-  public EntityManagerConfigurator(Map<String, Object> properties, 
+  public EntityManagerConfigurator(Map<String, Object> properties,
       CassandraHostConfigurator cassandraHostConfigurator) {
     classpathPrefix = getPropertyGently(properties, CLASSPATH_PREFIX_PROP,true);
     clusterName = getPropertyGently(properties, CLUSTER_NAME_PROP,true);
@@ -58,8 +58,8 @@ public class EntityManagerConfigurator {
     }
     this.cassandraHostConfigurator = cassandraHostConfigurator;
   }
-  
-  
+
+
   public static String getPropertyGently(Map<String, Object> props, String key, boolean throwError) {
     if ( props.get(key) != null ) {
       return props.get(key).toString();
@@ -94,7 +94,7 @@ public class EntityManagerConfigurator {
     .append(KEYSPACE_PROP).append(":")
     .append(keyspace).toString();
   }
-  
-  
-    
+
+
+
 }

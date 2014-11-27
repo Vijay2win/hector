@@ -12,11 +12,11 @@ import me.prettyprint.hector.api.exceptions.HectorException;
 public interface Keyspace {
 
   public static final String KEYSPACE_SYSTEM = "system";
-  
+
   void setConsistencyLevelPolicy(ConsistencyLevelPolicy cp);
 
   String getKeyspaceName();
-  
+
   long createClock();
 
 }

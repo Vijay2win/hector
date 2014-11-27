@@ -25,10 +25,12 @@ public class BasicColumnFamilyDefinition implements ColumnFamilyDefinition {
   private double readRepairChance;
   private int gcGraceSeconds;
   private String defaultValidationClass;
+  private String keyValidationClass;
   private int id;
   private int maxCompactionThreshold;
   private int minCompactionThreshold;
   private int rowCacheSavePeriodInSeconds;
+  private int keyCacheSavePeriodInSeconds;
   private double memtableOperationsInMillions;
   private int memtableThroughputInMb;
   private int memtableFlushAfterMins;
@@ -39,7 +41,7 @@ public class BasicColumnFamilyDefinition implements ColumnFamilyDefinition {
   public BasicColumnFamilyDefinition() {
     this.columnDefinitions = new ArrayList<ColumnDefinition>();
   }
-  
+
   /**
    * Builds a {@link BasicColumnFamilyDefinition} based off the interface
    */
@@ -53,9 +55,10 @@ public class BasicColumnFamilyDefinition implements ColumnFamilyDefinition {
     rowCacheSize = columnFamilyDefinition.getRowCacheSize();
     rowCacheSavePeriodInSeconds = columnFamilyDefinition.getRowCacheSavePeriodInSeconds();
     keyCacheSize = columnFamilyDefinition.getKeyCacheSize();
+    keyCacheSavePeriodInSeconds = columnFamilyDefinition.getKeyCacheSavePeriodInSeconds();
     readRepairChance = columnFamilyDefinition.getReadRepairChance();
-    columnDefinitions = columnFamilyDefinition.getColumnMetadata() != null 
-    ? new ArrayList<ColumnDefinition>(columnFamilyDefinition.getColumnMetadata()) 
+    columnDefinitions = columnFamilyDefinition.getColumnMetadata() != null
+    ? new ArrayList<ColumnDefinition>(columnFamilyDefinition.getColumnMetadata())
         : new ArrayList<ColumnDefinition>();
     gcGraceSeconds = columnFamilyDefinition.getGcGraceSeconds();
     defaultValidationClass = columnFamilyDefinition.getDefaultValidationClass();
@@ -121,7 +124,7 @@ public class BasicColumnFamilyDefinition implements ColumnFamilyDefinition {
 
   public void setMinCompactionThreshold(int minCompactionThreshold) {
     this.minCompactionThreshold = minCompactionThreshold;
-  }    
+  }
 
   public void setRowCacheSavePeriodInSeconds(int rowCacheSavePeriodInSeconds) {
     this.rowCacheSavePeriodInSeconds = rowCacheSavePeriodInSeconds;
@@ -141,6 +144,14 @@ public class BasicColumnFamilyDefinition implements ColumnFamilyDefinition {
 
   public void addColumnDefinition( ColumnDefinition columnDefinition){
     this.columnDefinitions.add( columnDefinition );
+  }
+
+  public void setKeyCacheSavePeriodInSeconds(int keyCacheSavePeriodInSeconds) {
+    this.keyCacheSavePeriodInSeconds = keyCacheSavePeriodInSeconds;
+  }
+
+  public void setKeyValidationClass(String keyValidationClass){
+      this.keyValidationClass = keyValidationClass;
   }
 
   /**
@@ -242,5 +253,13 @@ public class BasicColumnFamilyDefinition implements ColumnFamilyDefinition {
     return this.memtableThroughputInMb;
   }
 
+  public int getKeyCacheSavePeriodInSeconds() {
+    return keyCacheSavePeriodInSeconds;
+  }
+
+  @Override
+  public String getKeyValidationClass() {
+      return keyValidationClass;
+  }
 
 }

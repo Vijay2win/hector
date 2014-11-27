@@ -1,20 +1,18 @@
 package me.prettyprint.cassandra.model;
 
 import static me.prettyprint.hector.api.factory.HFactory.createColumn;
+import static me.prettyprint.hector.api.factory.HFactory.createCounterColumn;
 import static me.prettyprint.hector.api.factory.HFactory.createColumnQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createKeyspace;
 import static me.prettyprint.hector.api.factory.HFactory.createMutator;
 import static me.prettyprint.hector.api.factory.HFactory.createSuperColumn;
 import static me.prettyprint.hector.api.factory.HFactory.getOrCreateCluster;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import me.prettyprint.cassandra.BaseEmbededServerSetupTest;
+import me.prettyprint.cassandra.model.thrift.ThriftCounterColumnQuery;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.cassandra.utils.StringUtils;
 import me.prettyprint.hector.api.Cluster;
@@ -25,6 +23,7 @@ import me.prettyprint.hector.api.factory.HFactory;
 import me.prettyprint.hector.api.mutation.MutationResult;
 import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.ColumnQuery;
+import me.prettyprint.hector.api.query.CounterQuery;
 import me.prettyprint.hector.api.query.QueryResult;
 import me.prettyprint.hector.api.query.SuperColumnQuery;
 
@@ -61,15 +60,34 @@ public class MutatorTest extends BaseEmbededServerSetupTest {
   }
 
   @Test
-  public void testInsertSuper() {
+  public void testInsertAndDeleteSuper() {
     Mutator<String> m = createMutator(keyspace, se);
     List<HColumn<String, String>> columnList = new ArrayList<HColumn<String,String>>();
     columnList.add(createColumn("name","value",se,se));
-    HSuperColumn<String, String, String> superColumn =
-        createSuperColumn("super_name", columnList, se, se, se);
+    HSuperColumn<String, String, String> superColumn = createSuperColumn("super_name", columnList, se, se, se);
+
+    // Insert Super Column
     MutationResult r = m.insert("sk", "Super1", superColumn);
+
     assertTrue("Execute time should be > 0", r.getExecutionTimeMicro() > 0);
     assertTrue("Should have operated on a host", r.getHostUsed() != null);
+
+    // Fetch and verify it exists.
+    SuperColumnQuery<String, String, String, String> scq = HFactory.createSuperColumnQuery(keyspace, se, se, se, se);
+    scq.setColumnFamily("Super1");
+    scq.setKey("sk");
+    scq.setSuperName("super_name");
+    assertEquals("super_name", scq.execute().get().getName());
+
+    // Remove the Super Column
+    m.superDelete("sk", "Super1", "super_name", se);
+
+    // Fetch and verify it exists.
+    scq = HFactory.createSuperColumnQuery(keyspace, se, se, se, se);
+    scq.setColumnFamily("Super1");
+    scq.setKey("sk");
+    scq.setSuperName("super_name");
+    assertNull("super_name", scq.execute().get());
   }
 
   @Test
@@ -82,23 +100,48 @@ public class MutatorTest extends BaseEmbededServerSetupTest {
     HSuperColumn<String, String, String> superColumn =
         createSuperColumn("super_name", columnList, se, se, se);
     MutationResult r = m.insert("sk1", "Super1", superColumn);
-    
+
     SuperColumnQuery<String, String, String, String> scq = HFactory.createSuperColumnQuery(keyspace, se, se, se, se);
     scq.setColumnFamily("Super1");
     scq.setKey("sk1");
     scq.setSuperName("super_name");
     assertEquals(3,scq.execute().get().getColumns().size());
-    
+
+    m.discardPendingMutations();
+
+    m.addSubDelete("sk1", "Super1", "super_name", "col_1", se, se);
+    m.execute();
+
+    assertEquals(2,scq.execute().get().getColumns().size());
+  }
+
+  @Test
+  public void testSubDeleteHSuperColumn() {
+    Mutator<String> m = createMutator(keyspace, se);
+    List<HColumn<String, String>> columnList = new ArrayList<HColumn<String,String>>();
+    columnList.add(createColumn("col_1","val_1",se,se));
+    columnList.add(createColumn("col_2","val_2",se,se));
+    columnList.add(createColumn("col_3","val_3",se,se));
+    HSuperColumn<String, String, String> superColumn =
+        createSuperColumn("super_name", columnList, se, se, se);
+    MutationResult r = m.insert("sk1", "Super1", superColumn);
+
+    SuperColumnQuery<String, String, String, String> scq = HFactory.createSuperColumnQuery(keyspace, se, se, se, se);
+    scq.setColumnFamily("Super1");
+    scq.setKey("sk1");
+    scq.setSuperName("super_name");
+    assertEquals(3,scq.execute().get().getColumns().size());
+
     m.discardPendingMutations();
     columnList.remove(1);
     columnList.remove(0);
     superColumn.setSubcolumns(columnList);
     m.addSubDelete("sk1", "Super1", superColumn);
     m.execute();
-        
+
     assertEquals(2,scq.execute().get().getColumns().size());
   }
-  
+
   @Test
   public void testBatchMutationManagement() {
     String cf = "Standard1";
@@ -165,6 +208,17 @@ public class MutatorTest extends BaseEmbededServerSetupTest {
     columnResult = createColumnQuery(keyspace, se, se, se).
         setColumnFamily(cf).setKey("key0").setName("name").execute();
     assertNull(columnResult.get());
+  }
+
+  @Test
+  public void testInsertCounter() {
+    Mutator<String> m = createMutator(keyspace, se);
+    MutationResult mr = m.insertCounter("k", "Counter1", createCounterColumn("name", 5));
+    assertTrue("Execution time on single counter insert should be > 0", mr.getExecutionTimeMicro() > 0);
+    assertTrue("Should have operated on a host", mr.getHostUsed() != null);
+    CounterQuery<String, String> counter = new ThriftCounterColumnQuery<String,String>(keyspace, se, se);
+    counter.setColumnFamily("Counter1").setKey("k").setName("name");
+    assertEquals(new Long(5), counter.execute().get().getValue());
   }
 
   private void assertColumnExists(String keyspace, String cf, String key, String column) {

@@ -55,14 +55,14 @@ public final class HSuperColumnImpl<SN,N,V> implements HSuperColumn<SN, N, V> {
   public HSuperColumnImpl(SuperColumn thriftSuperColumn, Serializer<SN> sNameSerializer,
       Serializer<N> nameSerializer, Serializer<V> valueSerializer) {
     this(sNameSerializer, nameSerializer, valueSerializer);
-    noneNull(thriftSuperColumn, sNameSerializer, nameSerializer, valueSerializer);
+    noneNull(thriftSuperColumn, sNameSerializer, nameSerializer);
     superName = sNameSerializer.fromByteBuffer(ByteBuffer.wrap(thriftSuperColumn.getName()));
     columns = fromThriftColumns(thriftSuperColumn.getColumns());
   }
 
   /*package*/ HSuperColumnImpl(Serializer<SN> sNameSerializer, Serializer<N> nameSerializer,
       Serializer<V> valueSerializer) {
-    noneNull(sNameSerializer, nameSerializer, valueSerializer);
+    noneNull(sNameSerializer, nameSerializer);
     this.superNameSerializer = sNameSerializer;
     this.nameSerializer = nameSerializer;
     this.valueSerializer = valueSerializer;
@@ -126,7 +126,7 @@ public final class HSuperColumnImpl<SN,N,V> implements HSuperColumn<SN, N, V> {
   public byte[] getNameBytes() {
     return superNameSerializer.toByteBuffer(getName()).array();
   }
-  
+
   public ByteBuffer getNameByteBuffer() {
     return superNameSerializer.toByteBuffer(getName());
   }

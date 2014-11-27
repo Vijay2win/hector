@@ -1,54 +1,36 @@
 package me.prettyprint.cassandra.connection;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import me.prettyprint.cassandra.service.CassandraClientMonitor;
+import me.prettyprint.cassandra.service.*;
 import me.prettyprint.cassandra.service.CassandraClientMonitor.Counter;
-import me.prettyprint.cassandra.service.CassandraHost;
-import me.prettyprint.cassandra.service.CassandraHostConfigurator;
-import me.prettyprint.cassandra.service.ExceptionsTranslator;
-import me.prettyprint.cassandra.service.ExceptionsTranslatorImpl;
-import me.prettyprint.cassandra.service.FailoverPolicy;
-import me.prettyprint.cassandra.service.JmxMonitor;
-import me.prettyprint.cassandra.service.Operation;
 import me.prettyprint.hector.api.ClockResolution;
-import me.prettyprint.hector.api.exceptions.HCassandraInternalException;
-import me.prettyprint.hector.api.exceptions.HInvalidRequestException;
-import me.prettyprint.hector.api.exceptions.HTimedOutException;
-import me.prettyprint.hector.api.exceptions.HUnavailableException;
-import me.prettyprint.hector.api.exceptions.HectorException;
-import me.prettyprint.hector.api.exceptions.HectorTransportException;
-import me.prettyprint.hector.api.exceptions.PoolExhaustedException;
+import me.prettyprint.hector.api.exceptions.*;
 
 import org.apache.cassandra.thrift.AuthenticationRequest;
 import org.apache.cassandra.thrift.Cassandra;
 import org.cliffc.high_scale_lib.NonBlockingHashMap;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.ecyrd.speed4j.StopWatch;
+import com.ecyrd.speed4j.StopWatchFactory;
+import com.ecyrd.speed4j.log.PeriodicalLog;
 
 public class HConnectionManager {
 
   private static final Logger log = LoggerFactory.getLogger(HConnectionManager.class);
-  private static final Logger perf4jLogger =
-    LoggerFactory.getLogger("me.prettyprint.cassandra.hector.TimingLogger");
+  private StopWatchFactory stopWatchFactory;
 
   private final NonBlockingHashMap<CassandraHost,HClientPool> hostPools;
-  private final NonBlockingHashMap<CassandraHost,HClientPool> suspendedHostPools;  
-  private final List<HClientPool> hostPoolValues;
+  private final NonBlockingHashMap<CassandraHost,HClientPool> suspendedHostPools;
+  private final Collection<HClientPool> hostPoolValues;
   private final String clusterName;
   private CassandraHostRetryService cassandraHostRetryService;
   private NodeAutoDiscoverService nodeAutoDiscoverService;
   private LoadBalancingPolicy loadBalancingPolicy;
   private CassandraHostConfigurator cassandraHostConfigurator;
   private HostTimeoutTracker hostTimeoutTracker;
-
   private final ClockResolution clock;
 
   final ExceptionsTranslator exceptionsTranslator;
@@ -63,7 +45,7 @@ public class HConnectionManager {
     this.clusterName = clusterName;
     if ( cassandraHostConfigurator.getRetryDownedHosts() ) {
       cassandraHostRetryService = new CassandraHostRetryService(this, cassandraHostConfigurator);
-    }    
+    }
     for ( CassandraHost host : cassandraHostConfigurator.buildCassandraHosts()) {
       try {
         HClientPool hcp = loadBalancingPolicy.createConnection(host);
@@ -75,24 +57,37 @@ public class HConnectionManager {
         }
       }
     }
-       
+
     if ( cassandraHostConfigurator.getUseHostTimeoutTracker() ) {
       hostTimeoutTracker = new HostTimeoutTracker(this, cassandraHostConfigurator);
     }
     monitor = JmxMonitor.getInstance().getCassandraMonitor(this);
     exceptionsTranslator = new ExceptionsTranslatorImpl();
     this.cassandraHostConfigurator = cassandraHostConfigurator;
-    hostPoolValues = new ArrayList<HClientPool>(hostPools.values());
+    hostPoolValues = hostPools.values();
     if ( cassandraHostConfigurator.getAutoDiscoverHosts() ) {
       nodeAutoDiscoverService = new NodeAutoDiscoverService(this, cassandraHostConfigurator);
       if ( cassandraHostConfigurator.getRunAutoDiscoveryAtStartup() ) {
         nodeAutoDiscoverService.doAddNodes();
       }
     }
+
+    //
+    //  This sets up the Speed4J logging system.  Alternatively, we could
+    //  use the speed4j.properties -file.  This was chosen just so that
+    //  it wouldn't confuse anyone and would work pretty much the same
+    //  way as what the old hector config does.
+    //
+    PeriodicalLog slog = new PeriodicalLog();
+    slog.setName("hector-"+clusterName);
+    slog.setPeriod(60); // 60 seconds
+    slog.setSlf4jLogname( "me.prettyprint.cassandra.hector.TimingLogger" );
+
+    stopWatchFactory = StopWatchFactory.getInstance( slog );
   }
 
   /**
-   * Returns true if the host was successfully added. In any sort of failure exceptions are 
+   * Returns true if the host was successfully added. In any sort of failure exceptions are
    * caught and logged, returning false.
    * @param cassandraHost
    * @return
@@ -143,9 +138,9 @@ public class HConnectionManager {
     log.info("Remove status for CassandraHost pool {} was {}", cassandraHost, removed);
     return removed;
   }
-  
+
   /**
-   * Remove the {@link HClientPool} referenced by the {@link CassandraHost} from 
+   * Remove the {@link HClientPool} referenced by the {@link CassandraHost} from
    * the active host pools. This does not shut down the pool, only removes it as a candidate from
    * future operations.
    * @param cassandraHost
@@ -154,23 +149,23 @@ public class HConnectionManager {
   public boolean suspendCassandraHost(CassandraHost cassandraHost) {
     HClientPool pool = hostPools.remove(cassandraHost);
     boolean removed = pool != null;
-    if ( removed ) {      
+    if ( removed ) {
       suspendedHostPools.put(cassandraHost, pool);
     }
     log.info("Suspend operation status was {} for CassandraHost {}", removed, cassandraHost);
     return removed;
   }
 
-  /** 
+  /**
    * The opposite of suspendCassandraHost, places the pool back into selection
    * @param cassandraHost
-   * @return true if this operation was successful. A no-op returning false 
+   * @return true if this operation was successful. A no-op returning false
    * if there was no such host in the underlying suspendedHostPool map.
    */
   public boolean unsuspendCassandraHost(CassandraHost cassandraHost) {
     HClientPool pool = suspendedHostPools.remove(cassandraHost);
     boolean readded = pool != null;
-    if ( readded ) {      
+    if ( readded ) {
       boolean alreadyThere = hostPools.putIfAbsent(cassandraHost, pool) != null;
       if ( alreadyThere ) {
         log.error("Unsuspend called on a pool that was already active for CassandraHost {}", cassandraHost);
@@ -179,7 +174,7 @@ public class HConnectionManager {
     log.info("UN-Suspend operation status was {} for CassandraHost {}", readded, cassandraHost);
     return readded;
   }
-  
+
   /**
    * Returns a Set of {@link CassandraHost} which are in the suspended status
    * @return
@@ -187,7 +182,7 @@ public class HConnectionManager {
   public Set<CassandraHost> getSuspendedCassandraHosts() {
     return suspendedHostPools.keySet();
   }
-  
+
   public Set<CassandraHost> getHosts() {
     return Collections.unmodifiableSet(hostPools.keySet());
   }
@@ -202,7 +197,7 @@ public class HConnectionManager {
 
 
   public void operateWithFailover(Operation<?> op) throws HectorException {
-    final StopWatch stopWatch = new Slf4JStopWatch(perf4jLogger);
+    final StopWatch stopWatch = stopWatchFactory.getStopWatch();
     int retries = Math.min(op.failoverPolicy.numRetries, hostPools.size());
     HThriftClient client = null;
     HClientPool pool = null;
@@ -232,31 +227,29 @@ public class HConnectionManager {
           // break out on HUnavailableException as well since we can no longer satisfy the CL
           throw he;
         } else if ( he instanceof HectorTransportException) {
-          --retries;
           // client can be null in this situation
-          if ( client != null ) {            
+          if ( client != null ) {
             client.close();
           }
           markHostAsDown(pool.getCassandraHost());
           excludeHosts.add(pool.getCassandraHost());
           retryable = true;
-          if ( retries > 0 ) {
-            monitor.incCounter(Counter.RECOVERABLE_TRANSPORT_EXCEPTIONS);
-          }        
+
+          monitor.incCounter(Counter.RECOVERABLE_TRANSPORT_EXCEPTIONS);
+
         } else if (he instanceof HTimedOutException ) {
           // DO NOT drecrement retries, we will be keep retrying on timeouts until it comes back
-          // if HLT.checkTimeout(cassandraHost): suspendHost(cassandraHost);          
+          // if HLT.checkTimeout(cassandraHost): suspendHost(cassandraHost);
           doTimeoutCheck(pool.getCassandraHost());
-          if ( hostPools.size() > 1) {
-            retryable = true;
-          }
+
+          retryable = true;
+
           monitor.incCounter(Counter.RECOVERABLE_TIMED_OUT_EXCEPTIONS);
           client.close();
           // TODO timecheck on how long we've been waiting on timeouts here
           // suggestion per user moores on hector-users
         } else if ( he instanceof PoolExhaustedException ) {
           retryable = true;
-          --retries;
           if ( hostPools.size() == 1 ) {
             throw he;
           }
@@ -265,15 +258,17 @@ public class HConnectionManager {
         } else {
           // something strange happened. Added here as suggested by sbridges.
           // I think this gives a sane way to future-proof against any API additions
-          // that we don't add in time. 
+          // that we don't add in time.
           retryable = false;
         }
         if ( retries <= 0 || retryable == false) throw he;
-        log.error("Could not fullfill request on this host {}", client);
-        log.error("Exception: ", he);
+
+        log.warn("Could not fullfill request on this host {}", client);
+        log.warn("Exception: ", he);
         monitor.incCounter(Counter.SKIP_HOST_SUCCESS);
         sleepBetweenHostSkips(op.failoverPolicy);
       } finally {
+        --retries;
         if ( !success ) {
           monitor.incCounter(op.failCounter);
           stopWatch.stop(op.stopWatchTagName + ".fail_");
@@ -282,7 +277,7 @@ public class HConnectionManager {
       }
     }
   }
-  
+
   /**
    * Use the HostTimeoutCheck and initiate a suspend if and only if
    * we are configured for such AND there is more than one operating host pool
@@ -317,8 +312,8 @@ public class HConnectionManager {
   private HClientPool getClientFromLBPolicy(Set<CassandraHost> excludeHosts) {
     if ( hostPools.isEmpty() ) {
       throw new HectorException("All host pools marked down. Retry burden pushed out to client.");
-    }        
-    return loadBalancingPolicy.getPool(hostPoolValues, excludeHosts);    
+    }
+    return loadBalancingPolicy.getPool(hostPoolValues, excludeHosts);
   }
 
   void releaseClient(HThriftClient client) {
@@ -346,7 +341,7 @@ public class HConnectionManager {
     if ( pool != null ) {
       log.error("Pool state on shutdown: {}", pool.getStatusAsString());
       pool.shutdown();
-      if ( cassandraHostRetryService != null ) 
+      if ( cassandraHostRetryService != null )
         cassandraHostRetryService.add(cassandraHost);
     }
   }
@@ -362,7 +357,7 @@ public class HConnectionManager {
   public long createClock() {
     return this.clock.createClock();
   }
-  
+
   public String getClusterName() {
     return clusterName;
   }
@@ -373,7 +368,7 @@ public class HConnectionManager {
       cassandraHostRetryService.shutdown();
     if ( nodeAutoDiscoverService != null )
       nodeAutoDiscoverService.shutdown();
-    if ( hostTimeoutTracker != null ) 
+    if ( hostTimeoutTracker != null )
       hostTimeoutTracker.shutdown();
 
     for (HClientPool pool : hostPools.values()) {

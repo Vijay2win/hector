@@ -30,17 +30,17 @@ public abstract class Operation<T> {
 
   public FailoverPolicy failoverPolicy = FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE;
   public ConsistencyLevelPolicy consistencyLevelPolicy;
-  
+
   public String keyspaceName;
 
   public Map<String, String> credentials;
-  
+
   protected T result;
   private HectorException exception;
   private CassandraHost cassandraHost;
   protected long execTime;
   public final OperationType operationType;
-  
+
   public Operation(OperationType operationType) {
     this.failCounter = operationType.equals(OperationType.READ) ? Counter.READ_FAIL :
       Counter.WRITE_FAIL;
@@ -51,7 +51,7 @@ public abstract class Operation<T> {
   public Operation(OperationType operationType, Map<String, String> credentials) {
     this(operationType, FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE, null, credentials);
   }
-  
+
   public Operation(OperationType operationType, FailoverPolicy failoverPolicy, String keyspaceName, Map<String, String> credentials) {
     this.failCounter = operationType.equals(OperationType.READ) ? Counter.READ_FAIL :
       Counter.WRITE_FAIL;
@@ -61,8 +61,8 @@ public abstract class Operation<T> {
     this.keyspaceName = keyspaceName;
     this.credentials = Collections.unmodifiableMap(credentials);
   }
-  
-  
+
+
   public void applyConnectionParams(String keyspace, ConsistencyLevelPolicy consistencyLevelPolicy,
       FailoverPolicy failoverPolicy, Map<String,String> credentials) {
     // TODO this is a first step. must be cleaned up.
@@ -85,7 +85,7 @@ public abstract class Operation<T> {
     // TODO remove in favor of getExecutionResult
     return result;
   }
-  
+
   public ExecutionResult<T> getExecutionResult() {
     return new ExecutionResult<T>(result, execTime, cassandraHost);
   }
@@ -113,10 +113,10 @@ public abstract class Operation<T> {
   public HectorException getException() {
     return exception;
   }
-  
+
   public CassandraHost getCassandraHost() {
     return this.cassandraHost;
   }
-  
+
 }
 

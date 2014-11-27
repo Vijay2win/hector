@@ -16,14 +16,14 @@ import com.sun.xml.fastinfoset.stax.StAXDocumentSerializer;
  * size as well as parse and serialization time. An instance of this class may
  * only serialize JAXB compatible objects of classes known to its configured
  * context.
- * 
+ *
  * @author shuzhang0@gmail.com
- * 
+ *
  */
 public class FastInfosetSerializer extends JaxbSerializer {
   /**
    * Constructor.
-   * 
+   *
    * @param serializableClasses
    *          List of classes which can be serialized by this instance. Note
    *          that concrete classes directly referenced by any class in the list

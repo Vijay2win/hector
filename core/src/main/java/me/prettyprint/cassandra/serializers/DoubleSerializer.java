@@ -7,8 +7,8 @@ import me.prettyprint.cassandra.serializers.LongSerializer;
 
 /**
  * Uses LongSerializer via translating Doubles to and from raw long bytes form.
- * 
- * @author Yuri Finkelstein 
+ *
+ * @author Yuri Finkelstein
  */
 public class DoubleSerializer extends AbstractSerializer<Double> {
 
@@ -17,7 +17,7 @@ public class DoubleSerializer extends AbstractSerializer<Double> {
   public static DoubleSerializer get() {
     return instance;
   }
-  
+
   @Override
   public ByteBuffer toByteBuffer(Double obj) {
     return LongSerializer.get().toByteBuffer(Double.doubleToRawLongBits(obj));

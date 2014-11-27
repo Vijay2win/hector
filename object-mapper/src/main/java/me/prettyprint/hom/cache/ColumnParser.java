@@ -12,7 +12,7 @@ import me.prettyprint.hom.converters.DefaultConverter;
 
 /**
  * Parse, validate, and set defaults if needed for Inheritance functionality.
- * 
+ *
  * @author bburruss
  */
 public class ColumnParser implements ColumnParserValidator {

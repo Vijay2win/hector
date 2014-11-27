@@ -33,8 +33,15 @@ public final class HColumnImpl<N,V> implements HColumn<N, V> {
     notNull(name, "name is null");
     notNull(value, "value is null");
 
-    this.column = new Column(nameSerializer.toByteBuffer(name), 
-        valueSerializer.toByteBuffer(value), clock);
+    this.column = new Column(nameSerializer.toByteBuffer(name));
+    this.column.setValue(valueSerializer.toByteBuffer(value));
+    this.column.setTimestamp(clock);
+  }
+
+  public HColumnImpl(N name, V value, long clock, int ttl,
+		Serializer<N> nameSerializer, Serializer<V> valueSerializer) {
+	  this(name, value, clock, nameSerializer, valueSerializer);
+	  setTtl(ttl);
   }
 
   public HColumnImpl(Column thriftColumn, Serializer<N> nameSerializer,
@@ -60,14 +67,14 @@ public final class HColumnImpl<N,V> implements HColumn<N, V> {
   @Override
   public HColumn<N,V> setName(N name) {
     notNull(name, "name is null");
-    this.column.name = nameSerializer.toByteBuffer(name);
+    this.column.setName(nameSerializer.toByteBuffer(name));
     return this;
   }
 
   @Override
   public HColumn<N, V> setValue(V value) {
     notNull(value, "value is null");
-    this.column.value = valueSerializer.toByteBuffer(value);
+    this.column.setValue(valueSerializer.toByteBuffer(value));
     return this;
   }
 
@@ -78,7 +85,7 @@ public final class HColumnImpl<N,V> implements HColumn<N, V> {
   }
 
   /**
-   * Set the time-to-live value for this column in seconds. 
+   * Set the time-to-live value for this column in seconds.
    * The server will mark this column as deleted once the number of seconds has elapsed.
    */
   @Override
@@ -94,20 +101,14 @@ public final class HColumnImpl<N,V> implements HColumn<N, V> {
 
   @Override
   public N getName() {
-    if ( column.name == null ) {
-      return null;
-    }
-    return nameSerializer.fromByteBuffer(column.name.duplicate());
+    return column.isSetName() ? nameSerializer.fromByteBuffer(column.name.duplicate()) : null;
   }
 
   @Override
-  public V getValue() {   
-    if ( column.value == null ) {
-      return null;
-    }
-    return valueSerializer.fromByteBuffer(column.value.duplicate());
-  }  
-  
+  public V getValue() {
+    return column.isSetValue() ? valueSerializer.fromByteBuffer(column.value.duplicate()) : null;
+  }
+
 
   @Override
   public long getClock() {
@@ -134,25 +135,35 @@ public final class HColumnImpl<N,V> implements HColumn<N, V> {
     return valueSerializer;
   }
 
-  
+  @Override
+  public ByteBuffer getNameBytes() {
+    return column.isSetName() ? column.name.duplicate() : null;
+  }
+
+  @Override
+  public ByteBuffer getValueBytes() {
+    return column.isSetValue() ? column.value.duplicate() : null;
+  }
+
   /**
    * Clear value, timestamp and ttl (the latter two set to '0') leaving only the column name
    */
   @Override
-  public HColumn<N,V> clear() {    
+  public HColumn<N,V> clear() {
     column.value = null;
     column.timestamp = 0;
     column.ttl = 0;
     column.setTimestampIsSet(false);
     column.setTtlIsSet(false);
+    column.setValueIsSet(false);
     return this;
   }
-  
-  
+
+
 
   @Override
   public HColumn<N, V> apply(V value, long clock, int ttl) {
-    column.value = valueSerializer.toByteBuffer(value);
+    setValue(value);
     column.setTimestamp(clock);
     column.setTtl(ttl);
     return this;
@@ -162,7 +173,7 @@ public final class HColumnImpl<N,V> implements HColumn<N, V> {
     this.column = c;
     return this;
   }
-  
+
   @Override
   public String toString() {
     return String.format("HColumn(%s=%s)",getName(), getValue());

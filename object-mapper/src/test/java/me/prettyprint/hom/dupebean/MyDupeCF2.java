@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 /**
  * Entity for testing duplication class <-> column family mapping.
- * 
+ *
  * @author Todd Burruss
  */
 @Entity

@@ -8,17 +8,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ConcurrentHClientPoolTest extends BaseEmbededServerSetupTest {
-    
+
   private CassandraHost cassandraHost;
   private ConcurrentHClientPool clientPool;
-  
+
   @Before
   public void setupTest() {
     setupClient();
     cassandraHost = cassandraHostConfigurator.buildCassandraHosts()[0];
     clientPool = new ConcurrentHClientPool(cassandraHost);
   }
-  
+
   @Test
   public void testSpinUp() {
     assertEquals(16, clientPool.getNumIdle());
@@ -26,7 +26,7 @@ public class ConcurrentHClientPoolTest extends BaseEmbededServerSetupTest {
     assertEquals(0, clientPool.getNumBlockedThreads());
     assertEquals(0, clientPool.getNumActive());
   }
-  
+
   @Test
   public void testShutdown() {
     clientPool.shutdown();
@@ -34,7 +34,7 @@ public class ConcurrentHClientPoolTest extends BaseEmbededServerSetupTest {
     assertEquals(0, clientPool.getNumBlockedThreads());
     assertEquals(0, clientPool.getNumActive());
   }
-  
+
   @Test
   public void testBorrowRelease() {
     HThriftClient client = clientPool.borrowClient();

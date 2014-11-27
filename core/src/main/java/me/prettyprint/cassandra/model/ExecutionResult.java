@@ -1,6 +1,7 @@
 package me.prettyprint.cassandra.model;
 
 import me.prettyprint.cassandra.service.CassandraHost;
+import me.prettyprint.hector.api.ResultStatus;
 
 
 /**
@@ -11,12 +12,12 @@ import me.prettyprint.cassandra.service.CassandraHost;
  * @author Ran
  * @author zznate
  */
-public class ExecutionResult<T> {
+public class ExecutionResult<T> implements ResultStatus {
 
   private final T value;
   private final long execTime;
   private final CassandraHost cassandraHost;
-  
+
   protected static final String BASE_MSG_FORMAT = "%s took (%dus) for query (%s) on host: %s";
   private static final int MICRO_DENOM = 1000;
 
@@ -35,7 +36,14 @@ public class ExecutionResult<T> {
   }
 
   /**
-   * Execution time is actually recorded in nanos, so we divide this by 1000 
+   * @return the execution time, as already recorded, in nanos
+   */
+  public long getExecutionTimeNano() {
+    return execTime;
+  }
+
+  /**
+   * Execution time is actually recorded in nanos, so we divide this by 1000
    * make the number more sensible
    * @return
    */
@@ -43,11 +51,12 @@ public class ExecutionResult<T> {
     return execTime / MICRO_DENOM;
   }
 
+
   @Override
   public String toString() {
     return formatMessage("ExecutionResult", "n/a");
   }
-  
+
   protected String formatMessage(String resultName, String query) {
     return String.format(BASE_MSG_FORMAT, resultName, getExecutionTimeMicro(), query, (cassandraHost != null ? cassandraHost.getName() : "[none]"));
   }

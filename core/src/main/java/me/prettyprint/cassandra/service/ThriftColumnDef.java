@@ -26,9 +26,9 @@ public class ThriftColumnDef implements ColumnDefinition {
     name = cd.name;
     validationClass = cd.validation_class;
     indexType = indexTypeFromThrift(cd.index_type);
-    indexName = cd.index_name;    
+    indexName = cd.index_name;
   }
-  
+
   public ThriftColumnDef(ColumnDefinition columnDefinition) {
     name = columnDefinition.getName();
     validationClass = columnDefinition.getValidationClass();
@@ -107,7 +107,7 @@ public class ThriftColumnDef implements ColumnDefinition {
       throw new RuntimeException("Unknown ColumnIndexType value: " + indexType2);
     }
   }
-  
+
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

@@ -36,6 +36,20 @@ public class ThriftCluster extends AbstractCluster implements Cluster {
     return op.getResult();
   }
 
+  public Map<String,List<String>> describeSchemaVersions() throws HectorException {
+    Operation<Map<String,List<String>>> op = new Operation<Map<String,List<String>>>(OperationType.META_READ, getCredentials()) {
+      @Override
+      public Map<String,List<String>> execute(Cassandra.Client cassandra) throws HectorException {
+        try {
+          return cassandra.describe_schema_versions();
+        } catch (Exception e) {
+          throw xtrans.translate(e);
+        }
+      }
+    };
+    connectionManager.operateWithFailover(op);
+    return op.getResult();
+  }
 
 
   @Override
@@ -58,7 +72,7 @@ public class ThriftCluster extends AbstractCluster implements Cluster {
   public String addColumnFamily(final ColumnFamilyDefinition cfdef) throws HectorException {
     Operation<String> op = new Operation<String>(OperationType.META_WRITE,
         FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE,
-        cfdef.getKeyspaceName(), 
+        cfdef.getKeyspaceName(),
         getCredentials()) {
       @Override
       public String execute(Cassandra.Client cassandra) throws HectorException {
@@ -77,7 +91,7 @@ public class ThriftCluster extends AbstractCluster implements Cluster {
   public String updateColumnFamily(final ColumnFamilyDefinition cfdef) throws HectorException {
     Operation<String> op = new Operation<String>(OperationType.META_WRITE,
         FailoverPolicy.ON_FAIL_TRY_ALL_AVAILABLE,
-        cfdef.getKeyspaceName(), 
+        cfdef.getKeyspaceName(),
         getCredentials()) {
       @Override
       public String execute(Cassandra.Client cassandra) throws HectorException {
@@ -91,7 +105,7 @@ public class ThriftCluster extends AbstractCluster implements Cluster {
     connectionManager.operateWithFailover(op);
     return op.getResult();
   }
-  
+
   @Override
   public String addKeyspace(final KeyspaceDefinition ksdef) throws HectorException {
     Operation<String> op = new Operation<String>(OperationType.META_WRITE, getCredentials()) {

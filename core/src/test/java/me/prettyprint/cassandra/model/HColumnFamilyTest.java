@@ -27,7 +27,7 @@ import org.junit.Test;
 
 
 public class HColumnFamilyTest extends BaseEmbededServerSetupTest {
-  
+
   private Keyspace keyspace;
   private UUID timeUUID;
   @Before
@@ -35,7 +35,7 @@ public class HColumnFamilyTest extends BaseEmbededServerSetupTest {
     //setupClient();
     Cluster cluster = getOrCreateCluster("MyCluster", "127.0.0.1:9170");
     keyspace = createKeyspace("Keyspace1", cluster);
-    
+
     Mutator<String> mutator = HFactory.createMutator(keyspace, StringSerializer.get());
     mutator.addInsertion("zznate", "Standard1", HFactory.createStringColumn("email", "nate@datastax.com"));
     mutator.addInsertion("zznate", "Standard1", HFactory.createColumn("int", 1, StringSerializer.get(), IntegerSerializer.get()));
@@ -44,7 +44,7 @@ public class HColumnFamilyTest extends BaseEmbededServerSetupTest {
     mutator.addInsertion("zznate", "Standard1", HFactory.createColumn("uuid", timeUUID, StringSerializer.get(), UUIDSerializer.get()));
     mutator.execute();
   }
-  
+
   @Test
   public void testColumnFamilySetup() {
     HColumnFamily<String, String> columnFamily = new HColumnFamilyImpl<String,String>(keyspace, "Standard1",StringSerializer.get(), StringSerializer.get());
@@ -56,7 +56,7 @@ public class HColumnFamilyTest extends BaseEmbededServerSetupTest {
     assertEquals(timeUUID, columnFamily.getUUID("uuid"));
 
   }
-  
+
   @Test
   public void testColumnFamilyReadahead() {
     HColumnFamily<String, String> columnFamily = new HColumnFamilyImpl<String,String>(keyspace, "Standard1",StringSerializer.get(), StringSerializer.get());
@@ -68,7 +68,7 @@ public class HColumnFamilyTest extends BaseEmbededServerSetupTest {
     assertEquals(timeUUID, columnFamily.getUUID("uuid"));
 
   }
-  
+
   @Test
   public void testClearAndRecall() {
     HColumnFamily<String, String> columnFamily = new HColumnFamilyImpl<String,String>(keyspace, "Standard1",StringSerializer.get(), StringSerializer.get());
@@ -83,7 +83,7 @@ public class HColumnFamilyTest extends BaseEmbededServerSetupTest {
     assertEquals(4,columnFamily.getColumns().size());
     assertEquals(timeUUID, columnFamily.getUUID("uuid"));
   }
-  
+
   @Test
   public void testToggleMultiget() {
     Mutator<String> mutator = HFactory.createMutator(keyspace, StringSerializer.get());
@@ -93,7 +93,7 @@ public class HColumnFamilyTest extends BaseEmbededServerSetupTest {
     timeUUID = TimeUUIDUtils.getTimeUUID(System.currentTimeMillis());
     mutator.addInsertion("patricioe", "Standard1", HFactory.createColumn("uuid", timeUUID, StringSerializer.get(), UUIDSerializer.get()));
     mutator.execute();
-    
+
     HColumnFamilyImpl<String, String> columnFamily = new HColumnFamilyImpl<String,String>(keyspace, "Standard1",StringSerializer.get(), StringSerializer.get());
     columnFamily.addKey("zznate").addKey("patricioe").setCount(10);
     assertEquals("nate@datastax.com",columnFamily.getString("email"));

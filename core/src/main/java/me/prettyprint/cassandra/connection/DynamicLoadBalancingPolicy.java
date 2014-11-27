@@ -22,7 +22,7 @@ import com.google.common.collect.Maps;
 /**
  * This LB Algorithm has the Phi algo which Dynamic snitch uses, LB is based on the probablity of failure of the node.
  * TODO: Make cassandra code abstracted enough so we can inherit from the same.
- * 
+ *
  * @author Vijay Parthasarathy
  */
 public class DynamicLoadBalancingPolicy implements LoadBalancingPolicy {
@@ -62,7 +62,7 @@ public class DynamicLoadBalancingPolicy implements LoadBalancingPolicy {
   }
 
   @Override
-  public HClientPool getPool(List<HClientPool> pools, Set<CassandraHost> excludeHosts) {
+  public HClientPool getPool(Collection<HClientPool> pools, Set<CassandraHost> excludeHosts) {
     List<HClientPool> poolList = Lists.newArrayList(pools);
 
     // remove the hosts from the list.
@@ -134,7 +134,7 @@ public class DynamicLoadBalancingPolicy implements LoadBalancingPolicy {
 
   /**
    * Set the configured interval for the stats to be recalculated (until this time it is been cached.
-   * 
+   *
    * @param updateInterval
    *          In ms.
    */
@@ -149,7 +149,7 @@ public class DynamicLoadBalancingPolicy implements LoadBalancingPolicy {
   /**
    * Set the configured interval for the stats to be reset so that the new stats are allowed and we can get rid of bad
    * nodes value. This is under the assumption that the bad nodes will eventually get better....
-   * 
+   *
    * @param resetInterval
    *          in ms
    */
@@ -163,9 +163,9 @@ public class DynamicLoadBalancingPolicy implements LoadBalancingPolicy {
 
   /**
    * This is the percentage of badness which is acceptable...
-   * 
+   *
    * Example: A should be 0.20 (20%) bad than B before B is choosen rathar than A.
-   * 
+   *
    * @param badness
    *          in %
    */

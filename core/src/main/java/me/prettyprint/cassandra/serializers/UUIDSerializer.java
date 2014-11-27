@@ -1,10 +1,15 @@
 package me.prettyprint.cassandra.serializers;
 
+import static me.prettyprint.hector.api.ddl.ComparatorType.UUIDTYPE;
+
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import me.prettyprint.hector.api.ddl.ComparatorType;
+
 /**
  * A UUIDSerializer translates the byte[] to and from UUID types.
+ *
  * @author Ed Anuff
  *
  */
@@ -16,6 +21,7 @@ public final class UUIDSerializer extends AbstractSerializer<UUID> {
     return instance;
   }
 
+  @Override
   public ByteBuffer toByteBuffer(UUID uuid) {
     if (uuid == null) {
       return null;
@@ -34,11 +40,17 @@ public final class UUIDSerializer extends AbstractSerializer<UUID> {
     return ByteBuffer.wrap(buffer);
   }
 
+  @Override
   public UUID fromByteBuffer(ByteBuffer bytes) {
     if (bytes == null) {
       return null;
-    }    
+    }
     return new UUID(bytes.getLong(), bytes.getLong());
+  }
+
+  @Override
+  public ComparatorType getComparatorType() {
+    return UUIDTYPE;
   }
 
 }

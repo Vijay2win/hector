@@ -12,5 +12,5 @@ public interface ColumnParserValidator {
   <T> void parse(Field field, Annotation anno, PropertyDescriptor pd, CFMappingDef<T> cfMapDef);
 
 //  <T> void validateAndSetDefaults(ClassCacheMgr cacheMgr, CFMappingDef<T> cfMapDef);
-  
+
 }

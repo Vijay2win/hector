@@ -30,7 +30,7 @@ import me.prettyprint.hom.converters.DefaultConverter;
 
 /**
  * Manage parsing and caching of class meta-data.
- * 
+ *
  * @author
  */
 public class ClassCacheMgr {
@@ -46,9 +46,9 @@ public class ClassCacheMgr {
    * Examine class hierarchy using {@link CFMappingDef} objects to discover the
    * given class' "base inheritance" class. A base inheritance class is
    * determined by {@link CFMappingDef#isBaseInheritanceClass()}
-   * 
+   *
    * @param <T>
-   * 
+   *
    * @param cfMapDef
    * @return returns the base in the ColumnFamily mapping hierarchy
    */
@@ -66,7 +66,7 @@ public class ClassCacheMgr {
 
   /**
    * Retrieve class mapping meta-data by <code>Class</code> object.
-   * 
+   *
    * @param <T>
    * @param clazz
    * @param throwException
@@ -88,7 +88,7 @@ public class ClassCacheMgr {
 
   /**
    * Retrieve class mapping meta-data by ColumnFamily name.
-   * 
+   *
    * @param <T>
    * @param colFamName
    * @param throwException
@@ -111,9 +111,9 @@ public class ClassCacheMgr {
   /**
    * For each class that should be managed, this method must be called to parse
    * its annotations and derive its meta-data.
-   * 
+   *
    * @param <T>
-   * 
+   *
    * @param clazz
    * @return CFMapping describing the initialized class.
    */
@@ -349,7 +349,7 @@ public class ClassCacheMgr {
 
   /**
    * Find method annotated with the given annotation.
-   * 
+   *
    * @param clazz
    * @param anno
    * @return returns Method if found, null otherwise

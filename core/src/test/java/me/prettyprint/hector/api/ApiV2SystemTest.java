@@ -3,6 +3,8 @@ package me.prettyprint.hector.api;
 import static me.prettyprint.hector.api.factory.HFactory.createColumn;
 import static me.prettyprint.hector.api.factory.HFactory.createColumnQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createCountQuery;
+import static me.prettyprint.hector.api.factory.HFactory.createCounterColumn;
+import static me.prettyprint.hector.api.factory.HFactory.createCounterColumnQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createKeyspace;
 import static me.prettyprint.hector.api.factory.HFactory.createMultigetSliceQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createMultigetSubSliceQuery;
@@ -12,6 +14,7 @@ import static me.prettyprint.hector.api.factory.HFactory.createRangeSlicesQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createRangeSubSlicesQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createRangeSuperSlicesQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createSliceQuery;
+import static me.prettyprint.hector.api.factory.HFactory.createCounterSliceQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createSubColumnQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createSubCountQuery;
 import static me.prettyprint.hector.api.factory.HFactory.createSubSliceQuery;
@@ -33,7 +36,9 @@ import java.util.List;
 import me.prettyprint.cassandra.BaseEmbededServerSetupTest;
 import me.prettyprint.cassandra.serializers.StringSerializer;
 import me.prettyprint.hector.api.beans.ColumnSlice;
+import me.prettyprint.hector.api.beans.CounterSlice;
 import me.prettyprint.hector.api.beans.HColumn;
+import me.prettyprint.hector.api.beans.HCounterColumn;
 import me.prettyprint.hector.api.beans.HSuperColumn;
 import me.prettyprint.hector.api.beans.OrderedRows;
 import me.prettyprint.hector.api.beans.OrderedSuperRows;
@@ -46,6 +51,7 @@ import me.prettyprint.hector.api.mutation.MutationResult;
 import me.prettyprint.hector.api.mutation.Mutator;
 import me.prettyprint.hector.api.query.ColumnQuery;
 import me.prettyprint.hector.api.query.CountQuery;
+import me.prettyprint.hector.api.query.CounterQuery;
 import me.prettyprint.hector.api.query.MultigetSliceQuery;
 import me.prettyprint.hector.api.query.MultigetSubSliceQuery;
 import me.prettyprint.hector.api.query.MultigetSuperSliceQuery;
@@ -53,6 +59,7 @@ import me.prettyprint.hector.api.query.QueryResult;
 import me.prettyprint.hector.api.query.RangeSlicesQuery;
 import me.prettyprint.hector.api.query.RangeSubSlicesQuery;
 import me.prettyprint.hector.api.query.RangeSuperSlicesQuery;
+import me.prettyprint.hector.api.query.SliceCounterQuery;
 import me.prettyprint.hector.api.query.SliceQuery;
 import me.prettyprint.hector.api.query.SubColumnQuery;
 import me.prettyprint.hector.api.query.SubCountQuery;
@@ -77,7 +84,7 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
 
   @Before
   public void setupCase() {
-    cluster = getOrCreateCluster("MyCluster", "127.0.0.1:9170");
+    cluster = getOrCreateCluster("Test Cluster", "127.0.0.1:9170");
     ko = createKeyspace(KEYSPACE, cluster);
   }
 
@@ -85,6 +92,64 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
   public void teardownCase() {
     ko = null;
     cluster = null;
+  }
+
+  @Test
+  public void testInsertGetRemoveCounter() {
+    String cf = "Counter1";
+    Mutator<String> m = createMutator(ko, se);
+    MutationResult mr = m.insertCounter("testInsertGetRemoveCounter", cf,
+        createCounterColumn("testInsertGetRemoveCounter_name", 25));
+
+    log.debug("insert execution time: {}", mr.getExecutionTimeMicro());
+
+    // get value
+    CounterQuery<String, String> q = createCounterColumnQuery(ko, se, se);
+    q.setColumnFamily(cf).setName("testInsertGetRemoveCounter_name");
+    QueryResult<HCounterColumn<String>> r = q.setKey("testInsertGetRemoveCounter")
+        .execute();
+    assertNotNull(r);
+
+    HCounterColumn<String> c = r.get();
+    assertNotNull(c);
+    Long value = c.getValue();
+    assertEquals(25, value.longValue());
+    String name = c.getName();
+    assertEquals("testInsertGetRemoveCounter_name", name);
+    assertEquals(q, r.getQuery());
+
+    // remove value
+    m = createMutator(ko, se);
+    MutationResult mr2 = m.deleteCounter("testInsertGetRemoveCounter", cf, "testInsertGetRemoveCounter_name", se);
+
+    // get already removed value
+    CounterQuery<String, String> q2 = createCounterColumnQuery(ko, se, se);
+    q2.setName("testInsertGetRemoveCounter_name").setColumnFamily(cf);
+    QueryResult<HCounterColumn<String>> r2 = q2.setKey("testInsertGetRemoveCounter")
+        .execute();
+    assertNotNull(r2);
+    assertNull("Value should have been deleted", r2.get());
+  }
+
+  @Test
+  public void testIncrementDecrementCounter() {
+    String cf = "Counter1";
+    createMutator(ko, se).incrementCounter("testIncrementDecrementCounter", cf, "testIncrementDecrementCounter_name", 7);
+    createMutator(ko, se).decrementCounter("testIncrementDecrementCounter", cf, "testIncrementDecrementCounter_name", 2);
+
+    // The total in the counter is 5. (7 - 2)
+
+    // get value
+    CounterQuery<String, String> q = createCounterColumnQuery(ko, se, se);
+    q.setColumnFamily(cf).setName("testIncrementDecrementCounter_name");
+    QueryResult<HCounterColumn<String>> r = q.setKey("testIncrementDecrementCounter")
+        .execute();
+    assertNotNull(r);
+
+    HCounterColumn<String> c = r.get();
+    assertNotNull(c);
+    Long value = c.getValue();
+    assertEquals(5, value.longValue());
   }
 
   @Test
@@ -100,7 +165,6 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
 
     // Check the mutation result metadata
     // assertEquals("127.0.0.1:9170", mr.getHostUsed());
-    assertTrue("Time should be > 0", mr.getExecutionTimeMicro() > 0);
 
     log.debug("insert execution time: {}", mr.getExecutionTimeMicro());
 
@@ -118,13 +182,13 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     String name = c.getName();
     assertEquals("testInsertGetRemove", name);
     assertEquals(q, r.getQuery());
-    assertTrue("Time should be > 0", r.getExecutionTimeMicro() > 0);
+
 
     // remove value
     m = createMutator(ko, se);
     MutationResult mr2 = m.delete("testInsertGetRemove", cf,
         "testInsertGetRemove", se);
-    assertTrue("Time should be > 0", mr2.getExecutionTimeMicro() > 0);
+
 
     // get already removed value
     ColumnQuery<String, String, String> q2 = createColumnQuery(ko, se, se, se);
@@ -148,7 +212,7 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
               se, se));
     }
     m.execute();
-    
+
     // get value
     ColumnQuery<String, String, String> q = createColumnQuery(ko, se, se, se);
     q.setName("testInsertGetRemove").setColumnFamily(cf);
@@ -377,6 +441,49 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
     }
 
     deleteColumns(cleanup);
+  }
+
+  @Test
+  public void testCounterSliceQuery() {
+    String cf = "Counter1";
+
+    //TestCleanupDescriptor cleanup = insertColumns(cf, 1, "testSliceQuery", 4, "testSliceQuery");
+    Mutator<String> mutator = createMutator(ko, se);
+    for (int i = 0; i < 10; i++) {
+    	mutator.addCounter("testCounterSliceQuery_key", cf, createCounterColumn("" + i, i));
+    }
+    mutator.execute();
+
+    // get value
+    SliceCounterQuery<String, String> q = createCounterSliceQuery(ko, se, se);
+    q.setColumnFamily(cf);
+    q.setKey("testCounterSliceQuery_key");
+
+    // try with column name first
+    q.setColumnNames("4", "5", "6");
+    QueryResult<CounterSlice<String>> r = q.execute();
+
+    assertNotNull(r);
+
+    CounterSlice<String> slice = r.get();
+
+    assertNotNull(slice);
+
+    assertEquals(3, slice.getColumns().size());
+
+    // Test slice.getColumnByName
+    assertEquals(4, slice.getColumnByName("4").getValue().longValue());
+    assertEquals(5, slice.getColumnByName("5").getValue().longValue());
+    assertEquals(6, slice.getColumnByName("6").getValue().longValue());
+
+    // Test slice.getColumns
+    List<HCounterColumn<String>> columns = slice.getColumns();
+    assertNotNull(columns);
+    assertEquals(3, columns.size());
+
+    // Cleanup
+    mutator.deleteCounter("testCounterSliceQuery_key", cf, null, se);
+    mutator.execute();
   }
 
   @Test
@@ -929,9 +1036,9 @@ public class ApiV2SystemTest extends BaseEmbededServerSetupTest {
   /**
    * A class describing what kind of cleanup is required at the end of the test.
    * Just some bookeeping, that's all.
-   * 
+   *
    * @author Ran Tavory
-   * 
+   *
    */
   private static class TestCleanupDescriptor {
     public final String cf;

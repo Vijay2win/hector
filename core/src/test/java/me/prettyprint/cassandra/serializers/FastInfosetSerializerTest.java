@@ -4,7 +4,7 @@ import me.prettyprint.hector.api.Serializer;
 
 /**
  * @author shuzhang0@gmail.com
- * 
+ *
  */
 public class FastInfosetSerializerTest extends JaxbSerializerTest {
 

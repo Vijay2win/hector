@@ -11,6 +11,8 @@ import me.prettyprint.hector.api.Serializer;
 
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnOrSuperColumn;
+import org.apache.cassandra.thrift.CounterColumn;
+import org.apache.cassandra.thrift.CounterSuperColumn;
 import org.apache.cassandra.thrift.Deletion;
 import org.apache.cassandra.thrift.Mutation;
 import org.apache.cassandra.thrift.SuperColumn;
@@ -24,6 +26,7 @@ import org.apache.cassandra.thrift.SuperColumn;
  *
  * @author Ran Tavory (rantan@outbrain.com)
  * @author Nathan McCall (nate@riptano.com)
+ * @author Patricio Echague (patricioe@gmail.com)
  *
  */
 public final class BatchMutation<K> {
@@ -52,14 +55,34 @@ public final class BatchMutation<K> {
     return this;
   }
 
-
   /**
-   * Add an SuperColumn insertion (or update) to the batch mutation request.
+   * Add a SuperColumn insertion (or update) to the batch mutation request.
    */
   public BatchMutation<K> addSuperInsertion(K key, List<String> columnFamilies,
       SuperColumn superColumn) {
     Mutation mutation = new Mutation();
     mutation.setColumn_or_supercolumn(new ColumnOrSuperColumn().setSuper_column(superColumn));
+    addMutation(key, columnFamilies, mutation);
+    return this;
+  }
+
+  /**
+   * Add a ColumnCounter insertion (or update)
+   */
+  public BatchMutation<K> addCounterInsertion(K key, List<String> columnFamilies, CounterColumn counterColumn) {
+    Mutation mutation = new Mutation();
+    mutation.setColumn_or_supercolumn(new ColumnOrSuperColumn().setCounter_column(counterColumn));
+    addMutation(key, columnFamilies, mutation);
+    return this;
+  }
+
+  /**
+   * Add a SuperColumnCounter insertion (or update)
+   */
+  public BatchMutation<K> addSuperCounterInsertion(K key, List<String> columnFamilies,
+      CounterSuperColumn counterSuperColumn) {
+    Mutation mutation = new Mutation();
+    mutation.setColumn_or_supercolumn(new ColumnOrSuperColumn().setCounter_super_column(counterSuperColumn));
     addMutation(key, columnFamilies, mutation);
     return this;
   }
@@ -73,6 +96,7 @@ public final class BatchMutation<K> {
     addMutation(key, columnFamilies, mutation);
     return this;
   }
+
 
   private void addMutation(K key, List<String> columnFamilies, Mutation mutation) {
     Map<String, List<Mutation>> innerMutationMap = getInnerMutationMap(key);
@@ -88,6 +112,8 @@ public final class BatchMutation<K> {
     mutationMap.put(keySerializer.toByteBuffer(key), innerMutationMap);
   }
 
+
+
   private Map<String, List<Mutation>> getInnerMutationMap(K key) {
     Map<String, List<Mutation>> innerMutationMap = mutationMap.get(keySerializer.toByteBuffer(key));
     if (innerMutationMap == null) {
@@ -99,7 +125,6 @@ public final class BatchMutation<K> {
   Map<ByteBuffer,Map<String,List<Mutation>>> getMutationMap() {
     return mutationMap;
   }
-
 
   /**
    * Makes a shallow copy of the mutation object.
@@ -114,6 +139,6 @@ public final class BatchMutation<K> {
    * @return
    */
   public boolean isEmpty() {
-    return mutationMap.isEmpty();
+    return mutationMap.isEmpty() ;
   }
 }

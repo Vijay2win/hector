@@ -11,7 +11,7 @@ import me.prettyprint.hom.converters.Converter;
 /**
  * Annotation for specifying which POJO properties should be mapped to Cassandra
  * columns. Must specify "name" as the column name in Cassandra.
- * 
+ *
  * @author
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -20,7 +20,7 @@ public @interface Column {
 
   /**
    * The Cassandra column name.
-   * 
+   *
    * @return name of column
    */
   String name();
@@ -28,7 +28,7 @@ public @interface Column {
   /**
    * The optional converter to use when converting POJO property value to/from
    * byte[]. If not specified, {@link me.prettyprint.hom.converters.DefaultConverter} is used.
-   * 
+   *
    * @return Class of converter
    */
   Class<? extends Converter> converter() default me.prettyprint.hom.converters.DefaultConverter.class;
